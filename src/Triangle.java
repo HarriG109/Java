@@ -5,6 +5,8 @@ class Triangle extends TwoDimensionalShape implements MultiVariantShape
     Triangle testTriangle1 = new Triangle(5, 7, 9);
     int longestSide1 = testTriangle1.getLongestSide();
     System.out.println("The longest side of the triangle is " + longestSide1);
+    Triangle testTriangle2 = new  Triangle(1100000000, 1705032704, 1805032704);
+    System.out.println("Type of triangle is " + testTriangle2.getVariant());
   }
   /*
     Triangle testTriangle2 = new Triangle(12, 4, 8);
@@ -21,11 +23,14 @@ class Triangle extends TwoDimensionalShape implements MultiVariantShape
   }*/
 
   int a, b, c;
+  TriangleVariant v;
 
   public Triangle(int adj, int opp, int hyp){
     a = adj;
     b = opp;
     c = hyp;
+
+    setVariant();
   }
 
   public int getLongestSide(){
@@ -58,36 +63,42 @@ class Triangle extends TwoDimensionalShape implements MultiVariantShape
 
 
   public String toString() {
+
     return "Triangle adj, hyp, opp: " + a + ", " + b + ", " + c;
   }
 
-  TriangleVariant v;
-
-  public void setVariant(TriangleVariant v){
-    if(a == b && b == c){
-      v = TriangleVariant.EQUILATERAL;
-    }
-    else if((a == b && b != c) || (b == c && a != b) || (a == c && b != a)){
-      v = TriangleVariant.ISOSCELES;
-    }
-    else if(a == Math.sqrt(Math.pow(b, 2) + Math.pow(c, 2)) ||
-            b == Math.sqrt(Math.pow(a, 2) + Math.pow(c, 2)) ||
-            c == Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2))){
-      v = TriangleVariant.RIGHT;
-    }
-    else if(a != b && b != c && a != c){
-      v = TriangleVariant.SCALENE;
-    }
-    else if(a == b + c || b == c + a || c == a + b){
-      v = TriangleVariant.FLAT;
-    }
-    else if(a < b + c && b < c + a && c < a + b){
-      v = TriangleVariant.IMPOSSIBLE;
-    }
-    else if(a <= 0 || b <= 0 || c <= 0){
+  public void setVariant() {
+    if (a <= 0 || b <= 0 || c <= 0) {
       v = TriangleVariant.ILLEGAL;
     }
+    else if (a == b && b == c) {
+      v = TriangleVariant.EQUILATERAL;
+    }
+    else if (a == (b + c) ||
+            b == (c + a) ||
+            c == (a + b)) {
+      v = TriangleVariant.FLAT;
+    }
+    else if ((a == b && b != c) ||
+            (b == c && a != b) ||
+            (a == c && b != a)) {
+      v = TriangleVariant.ISOSCELES;
+    }
+    else if (a == Math.sqrt(Math.pow(b, 2) + Math.pow(c, 2)) ||
+            b == Math.sqrt(Math.pow(a, 2) + Math.pow(c, 2)) ||
+            c == Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2))) {
+      v = TriangleVariant.RIGHT;
+    }
+    else if (a > (b + c) ||
+            b > (c + a) ||
+            c > (a + b)){
+      v = TriangleVariant.IMPOSSIBLE;
+    }
+    else if (a != b && b != c && a != c) {
+      v = TriangleVariant.SCALENE;
+    }
   }
+
   public TriangleVariant getVariant(){
     return v;
   }

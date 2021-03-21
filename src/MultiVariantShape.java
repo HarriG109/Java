@@ -1,3 +1,0 @@
-interface MultiVariantShape {
-    TriangleVariant getVariant();
-}

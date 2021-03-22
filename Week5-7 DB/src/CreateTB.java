@@ -1,8 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
+import java.io.*;
 
 public class CreateTB {
 
@@ -10,7 +6,8 @@ public class CreateTB {
     public String fullFilePath;
     BufferedWriter bw = null;
 
-    CreateTB(String filePath, String[] commandArray, BufferedWriter socketWriter, int index){
+    public CreateTB(String filePath, String[] commandArray, BufferedWriter socketWriter) {
+
 
         fullFilePath = filePath + File.separator + commandArray[2] + ".tab";
 

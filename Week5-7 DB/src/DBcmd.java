@@ -1,24 +1,17 @@
-import DBExceptions.SyntaxException;
-import java.io.IOException;
 import java.io.BufferedWriter;
 
 public class DBcmd{
 
-    public int index = 0;
-    boolean use;
-
-    public DBcmd(String filePath, String[] tokenArray, BufferedWriter socketWriter) throws SyntaxException {
+    public DBcmd(String filePath, String[] tokenArray, BufferedWriter socketWriter) {
         processCMD(filePath, tokenArray, socketWriter);
     }
 
-    public void processCMD(String filePath, String[] commandArray, BufferedWriter socketWriter) throws SyntaxException {
+    public void processCMD(String filePath, String[] commandArray, BufferedWriter socketWriter) {
 
         if(commandArray[0].equals("CREATE")){
 
             //CREATE DATABASE Class
             if(commandArray[1].equals("DATABASE")){
-
-                //Need to check a 2nd argument or 4th and throw error
 
                 //Instantiate object
                 CreateDB newDB = new CreateDB(filePath, commandArray[2], socketWriter);
@@ -28,7 +21,7 @@ public class DBcmd{
             else if(commandArray[1].equals("TABLE")){
 
                 //Instantiate object
-                CreateTB newTB = new CreateTB(filePath, commandArray, socketWriter, index);
+                CreateTB newTB = new CreateTB(filePath, commandArray, socketWriter);
             }
         }
 
@@ -40,11 +33,36 @@ public class DBcmd{
         }
 
         //INSERT Class
-        else if(commandArray[index]).equals("INSERT"){
+        else if(commandArray[0].equals("INSERT")){
+
+            if(commandArray[1].equals("INTO")){
+
+                //Instantiate object
+                InsertRow newRow = new InsertRow(filePath, commandArray, socketWriter);
+            }
+        }
+
+        /*SELECT Class
+        else if(commandArray[0].equals("SELECT")){
 
             //Instantiate object
-            InsertRow newRow = new InsertRow(filePath, commandArray, socketWriter);
-
+            SelectRow getRow = new SelectRow(filePath, commandArray, socketWriter);
         }*/
+
+        //DROP Class
+        else if(commandArray[0].equals("DROP")){
+
+            if(commandArray[1].equals("TABLE")){
+
+                //Instantiate object
+                DeleteTB dTB = new DeleteTB(filePath, commandArray[2], socketWriter);
+            }
+            if(commandArray[1].equals("DATABASE")){
+
+                //Instantiate object
+                DeleteDB dDB = new DeleteDB(filePath, commandArray[2], socketWriter);
+            }
+        }
+
     }
 }

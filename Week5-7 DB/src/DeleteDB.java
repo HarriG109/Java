@@ -3,27 +3,23 @@ import java.io.*;
 public class DeleteDB {
 
     public File newTB;
-    public String fullFilePath, defaultPath;
+    public String fullFilePath;
 
     public DeleteDB(String filePath, String name, BufferedWriter socketWriter) {
 
-        //Create full filepath string and file
-        fullFilePath = filePath + File.separator + name;
-        newTB = new File(fullFilePath);
-
-        //Check folder is empty
-        if (checkEmpty(newTB, socketWriter) == true) {
-
-            //Delete specified table
-            removeFolder(newTB, socketWriter);
-        }
-    }
-
-    public void removeFolder(File folder, BufferedWriter socketWriter){
-
         try {
-            folder.delete();
-            socketWriter.write("Folder deleted: " + folder.getName());
+            //Create full filepath string and file
+            fullFilePath = filePath + File.separator + name;
+            newTB = new File(fullFilePath);
+
+            //Delete specified folder and contents
+            if (newTB.isDirectory()) {
+                removeFolder(newTB);
+                socketWriter.write("[OK] Folder deleted does not exist");
+            }
+            else{
+                socketWriter.write("[ERROR] Folder does not exist");
+            }
             socketWriter.flush();
         }
         catch(IOException ioe) {
@@ -32,33 +28,17 @@ public class DeleteDB {
         }
     }
 
-    //Method to get check for empty folder
-    public boolean checkEmpty(File folder, BufferedWriter socketWriter) {
+    //Recursive method to delete all files/folders within folder specified
+    public boolean removeFolder(File folder) {
 
         File[] contents = folder.listFiles();
 
-        try {
-
-            // the directory file is not really a directory..
-            if (contents == null) {
-                socketWriter.write("[ERROR] Folder does not exist");
-                socketWriter.flush();
-            }
-            // Folder is empty
-            else if (contents.length == 0) {
-                return true;
-            }
-            // Folder contains files
-            else {
-                socketWriter.write("[ERROR] Folder contains files");
-                socketWriter.flush();
+        if (contents != null) {
+            //Delete subcontents if full of files
+            for (File file : contents) {
+                removeFolder(file);
             }
         }
-        catch(IOException ioe) {
-            ioe.printStackTrace();
-            System.out.println(ioe);
-        }
-
-        return false;
+        return folder.delete();
     }
 }

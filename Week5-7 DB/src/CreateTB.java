@@ -5,6 +5,7 @@ public class CreateTB {
     public File newTB;
     public String fullFilePath;
     BufferedWriter bw = null;
+    int j = 0;
 
     public CreateTB(String filePath, String[] commandArray, BufferedWriter socketWriter) {
 
@@ -30,10 +31,10 @@ public class CreateTB {
                 bw = new BufferedWriter(fw);
 
                 //Printing commands for checking
-                /*while (j < commandArray.length){
+                while (j < commandArray.length){
                     socketWriter.write(commandArray[j] + "\n");
                     j++;
-                }*/
+                }
 
                 //Create ID column
                 bw.write("id");

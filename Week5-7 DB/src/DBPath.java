@@ -7,7 +7,6 @@ public class DBPath {
     public DBPath() {
 
         if (getPath() == null) {
-            System.out.println(getPath());
             setRootPath(System.getProperty("user.dir") + File.separator + "Databases");
             createRoot(getPath());
         }

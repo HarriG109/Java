@@ -15,11 +15,6 @@ public class CreateDB {
         //Create new path from command name
         File newDB = new File(filePath + File.separator + name);
 
-        /*while (j < commandArray.length){
-                    socketWriter.write(commandArray[j] + "\n");
-                    j++;
-                }*/
-
         //Check folder doesn't already exist and create it
         if(newDB.exists()){
             try{

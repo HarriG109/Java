@@ -1,12 +1,19 @@
+package DBCommands;
+
+import DBExceptions.FolderExistsException;
+import DBExceptions.FolderMissingException;
+
 import java.io.BufferedWriter;
 
 public class DBcmd{
 
-    public DBcmd(String filePath, String[] tokenArray, BufferedWriter socketWriter) {
+    public DBcmd(String filePath, String[] tokenArray, BufferedWriter socketWriter)
+            throws FolderExistsException, FolderMissingException {
         processCMD(filePath, tokenArray, socketWriter);
     }
 
-    public void processCMD(String filePath, String[] commandArray, BufferedWriter socketWriter) {
+    public void processCMD(String filePath, String[] commandArray, BufferedWriter socketWriter)
+            throws FolderExistsException, FolderMissingException {
 
         if(commandArray[0].equals("CREATE")){
 
@@ -29,7 +36,7 @@ public class DBcmd{
         else if(commandArray[0].equals("USE")) {
 
             //Instantiate object
-            UseDB useDB = new UseDB(filePath, commandArray[1], socketWriter);
+            UseDB useDB = new UseDB(commandArray[1]);
         }
 
         //INSERT Class
@@ -42,12 +49,12 @@ public class DBcmd{
             }
         }
 
-        /*SELECT Class
+        //SELECT Class
         else if(commandArray[0].equals("SELECT")){
 
             //Instantiate object
             SelectRow getRow = new SelectRow(filePath, commandArray, socketWriter);
-        }*/
+        }
 
         //DROP Class
         else if(commandArray[0].equals("DROP")){
@@ -63,6 +70,5 @@ public class DBcmd{
                 DeleteDB dDB = new DeleteDB(filePath, commandArray[2], socketWriter);
             }
         }
-
     }
 }

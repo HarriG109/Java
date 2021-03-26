@@ -1,18 +1,26 @@
 import java.io.*;
-import java.util.*;
+import DBCommands.DBPath;
+import DBCommands.DBcmd;
+import DBParse.DBParser;
 import DBExceptions.*;
 
-public class DBController extends DBPath{
 
-    public DBController(String incomingCommand, BufferedWriter socketWriter) throws SyntaxException{
+public class DBController extends DBPath {
+
+    public DBController(String incomingCommand, BufferedWriter socketWriter) throws SyntaxException, FolderMissingException {
 
         DBTokenizer newToken = new DBTokenizer(incomingCommand);
 
         //Parse the incoming command
-        //DBParser
+        DBParser newParse = new DBParser(path, newToken.getToken(), socketWriter);
 
         //If ok then interpret the incoming command
-        DBcmd newCommand = new DBcmd(path, newToken.getToken(), socketWriter);
-
+        if(newParse.getParse() == true){
+            DBcmd newCommand = new DBcmd(path, newToken.getToken(), socketWriter);
+        }
+        else{
+            SyntaxException e = new SyntaxException();
+            throw e;
+    }
     }
 }

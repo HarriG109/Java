@@ -1,19 +1,22 @@
+package DBCommands;
+
 import java.io.File;
 
 public class DBPath {
 
-    public String path;
+    public static String path;
 
     public DBPath() {
 
         if (getPath() == null) {
-            setRootPath(System.getProperty("user.dir") + File.separator + "Databases");
+            setPath(System.getProperty("user.dir") + File.separator + "Databases");
             createRoot(getPath());
+            System.out.println(getPath());
         }
     }
 
     //Method to create the root path
-    public void setRootPath(String pathname){
+    public void setPath(String pathname){
         path = pathname;
     }
 

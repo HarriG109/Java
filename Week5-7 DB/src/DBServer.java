@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.*;
+
+import DBCommands.DBPath;
 import DBExceptions.*;
 
 class DBServer
@@ -8,8 +10,6 @@ class DBServer
     public DBServer(int portNumber)
     {
         try {
-            /*Create the path method
-            createRoot();*/
             DBPath createPath = new DBPath();
             ServerSocket serverSocket = new ServerSocket(portNumber);
             System.out.println("Server Listening");
@@ -41,36 +41,20 @@ class DBServer
     {
         try {
             String incomingCommand = socketReader.readLine();
-            DBController parse = new DBController(incomingCommand, socketWriter);
-            System.out.println("Received message: " + incomingCommand);
-            socketWriter.write("[OK] Thanks for your message: " + incomingCommand);
-            socketWriter.write("\n" + ((char)4) + "\n");
-            socketWriter.flush();
+            DBController newController = new DBController(incomingCommand, socketWriter);
+            /*System.out.println("Received message: " + incomingCommand);*/
+            socketWriter.write("[OK]");
         }
-        catch(SyntaxException exception){
-            exception.printStackTrace();
-            System.out.println("DB Exception: " + exception);
+        catch(SyntaxException e){
+            socketWriter.write("[ERROR]: " + e.toString());
         }
+
+        socketWriter.write("\n" + ((char)4) + "\n");
+        socketWriter.flush();
     }
 
     public static void main(String args[])
     {
         DBServer server = new DBServer(8888);
     }
-
-    /*Create top level root folder if it doesn't exist
-    private static void createRoot(){
-
-        File newTopLevelDB = new File(System.getProperty("user.dir") + File.separator + "Databases");
-
-        //Return if exists
-        if(newTopLevelDB.exists()){
-            return;
-        }
-        //Else create the folder and check it has done correctly
-        else if(newTopLevelDB.mkdir() == false) {
-            System.exit(0);
-        }
-    }*/
-
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 public class DBParser {
 
     public static boolean parsed;
+    public static int index;
 
     public DBParser(String filePath, String[] commandArray, BufferedWriter socketWriter){
         parseCMD(filePath, commandArray);
@@ -19,83 +20,55 @@ public class DBParser {
     //Method to parse commands
     public void parseCMD(String filePath, String[] commandArray) {
 
-        int i = 0;
+        setIndex(0);
 
         //Check a command exists
-        if(i < commandArray.length){
+        if (checkCommand(commandArray, "CREATE")) {
 
-            if(commandArray[i].equals("CREATE")) {
+            //Increment counter
+            setIndex(getIndex() + 1);
 
-                //Increment counter
-                i++;
+            if (checkCommand(commandArray, "DATABASE")) {
 
-                if (i < commandArray.length){
+                ParseCreateDB PcDB = new ParseCreateDB(commandArray);
+                return;
 
-                    if(commandArray[i].equals("DATABASE")){
+            } else if (checkCommand(commandArray, "TABLE")) {
 
-                        ParseCreateDB PcDB = new ParseCreateDB(i, commandArray);
-                        return;
-                    }
-                    else if (commandArray[i].equals("TABLE")) {
+                ParseCreateTB PcTB = new ParseCreateTB(commandArray);
+                return;
 
-                    }
-                    setParse(false);
-                    return;
-                }
-                else{
-                    setParse(false);
-                    return;
-                }
-            } else if (commandArray[i].equals("USE")) {
-
-
-                ParseUse Pu = new ParseUse(i, commandArray);
+            } else {
+                setParse(false);
                 return;
             }
+        } else if (checkCommand(commandArray, "USE")) {
 
-                /*USE
-                case "USE":
+            ParseUse Pu = new ParseUse(commandArray);
+            return;
 
+        } else if (checkCommand(commandArray, "INSERT")) {
 
-                    break;
-
-                //INSERT Class
-                case "INSERT":
-
-                    if (commandArray[i].equals("INTO")) {
-
-
-                    }
-                    break;
-
-                //SELECT Class
-                case "SELECT":
-
-
-                    break;
-
-                //DROP Class
-                case "DROP":
-
-                    if (commandArray[i].equals("TABLE")) {
-
-
-                    }
-                    if (commandArray[i].equals("DATABASE")) {
-
-
-                    }
-                    break;
-
-                default:
-                    return false;
-
-            }*/
+            ParseInsert PcDB = new ParseInsert(commandArray);
+            return;
         }
-        /*else {*/
-        setParse(false);
-        return;
-        /*}*/
+        else if (checkCommand(commandArray, "DROP")) {
+
+            //Increment counter
+            setIndex(getIndex() + 1);
+
+            if (checkCommand(commandArray, "DATABASE")) {
+
+                ParseDropDB PcDB = new ParseDropDB(commandArray);
+                return;
+
+            } else if (checkCommand(commandArray, "TABLE")) {
+
+                ParseDropTB PcTB = new ParseDropTB(commandArray);
+                return;
+
+            }
+        }
     }
 
     public void setParse(boolean tf){
@@ -104,5 +77,102 @@ public class DBParser {
 
     public boolean getParse(){
         return parsed;
+    }
+
+    public void setIndex(int i){
+        index = i;
+    }
+
+    public int getIndex(){
+
+        return index;
+    }
+
+    //Method to evaluate each command with: (NO INCREMENT)
+    public boolean checkCommand(String [] commandArray, String command){
+
+        //If there are more commands then continue
+        if(getIndex() < commandArray.length) {
+
+            if (commandArray[getIndex()].equals(command)) {
+
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+
+    //Method to evaluate each command with: (INCREMENT)
+    public boolean checkCommandWithIncrement(String [] commandArray, String command){
+
+        //Increment counter
+        setIndex(getIndex() + 1);
+
+        //If there are more commands then continue
+        if(getIndex() < commandArray.length) {
+
+            if (commandArray[getIndex()].equals(command)) {
+
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+
+    //Method to evaluate alphanumeric (INCREMENT)
+    public boolean checkAlphaNumeric(String [] commandArray, String regexText){
+
+        //Increment counter
+        setIndex(getIndex() + 1);
+
+        //If there are more commands then continue
+        if(getIndex() < commandArray.length) {
+
+            if (commandArray[getIndex()].matches(regexText)) {
+
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+
+    //Method to check semi-colon (INCREMENT)
+    public boolean checkSemiColonandFollowing(String[] commandArray){
+
+
+        //Increment counter
+        setIndex(getIndex() + 1);
+
+        if(checkCommand(commandArray, ";")){
+
+            //Increment counter
+            setIndex(getIndex() + 1);
+
+            //Check if more commands thereafter
+            if(getIndex() == commandArray.length) {
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
     }
 }

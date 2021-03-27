@@ -1,5 +1,8 @@
 package DBCommands;
 
+import DBExceptions.FileMissingException;
+import DBExceptions.NoColumnsException;
+
 import java.io.*;
 
 public class InsertRow {
@@ -9,7 +12,8 @@ public class InsertRow {
     BufferedWriter bw = null;
     int id;
 
-    public InsertRow(String filePath, String[] commandArray, BufferedWriter socketWriter){
+    public InsertRow(String filePath, String[] commandArray, BufferedWriter socketWriter)
+            throws FileMissingException, NoColumnsException{
 
         //Get full filepath from commands
         fullFilePath = filePath + File.separator + commandArray[2] + ".tab";
@@ -20,9 +24,16 @@ public class InsertRow {
 
             //Check for existing file
             if (newTB.exists()) {
-                writeToFile(fullFilePath, newTB, commandArray, socketWriter, id);
+                if(idNum(fullFilePath) != 0) {
+                    writeToFile(fullFilePath, newTB, commandArray, socketWriter, id);
+                }
+                else{
+                    NoColumnsException nce = new NoColumnsException();
+                    throw nce;
+                }
             } else {
-                socketWriter.write("[ERROR] File doesn't exist");
+                FileMissingException fme = new FileMissingException();
+                throw fme;
             }
             socketWriter.flush();
         }

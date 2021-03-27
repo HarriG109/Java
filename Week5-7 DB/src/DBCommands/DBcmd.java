@@ -1,19 +1,20 @@
 package DBCommands;
 
-import DBExceptions.FolderExistsException;
-import DBExceptions.FolderMissingException;
+import DBExceptions.*;
 
 import java.io.BufferedWriter;
 
 public class DBcmd{
 
     public DBcmd(String filePath, String[] tokenArray, BufferedWriter socketWriter)
-            throws FolderExistsException, FolderMissingException {
+            throws FolderExistsException, FolderMissingException, FileExistsException, FileMissingException,
+            UsingDatabaseException, NoColumnsException {
         processCMD(filePath, tokenArray, socketWriter);
     }
 
     public void processCMD(String filePath, String[] commandArray, BufferedWriter socketWriter)
-            throws FolderExistsException, FolderMissingException {
+            throws FolderExistsException, FolderMissingException, FileExistsException, FileMissingException,
+            UsingDatabaseException, NoColumnsException {
 
         if(commandArray[0].equals("CREATE")){
 
@@ -62,12 +63,12 @@ public class DBcmd{
             if(commandArray[1].equals("TABLE")){
 
                 //Instantiate object
-                DeleteTB dTB = new DeleteTB(filePath, commandArray[2], socketWriter);
+                DropTB dTB = new DropTB(filePath, commandArray[2]);
             }
             if(commandArray[1].equals("DATABASE")){
 
                 //Instantiate object
-                DeleteDB dDB = new DeleteDB(filePath, commandArray[2], socketWriter);
+                DropDB dDB = new DropDB(filePath, commandArray[2]);
             }
         }
     }

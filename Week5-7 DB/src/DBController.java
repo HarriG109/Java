@@ -7,7 +7,7 @@ import DBExceptions.*;
 
 public class DBController extends DBPath {
 
-    public DBController(String incomingCommand, BufferedWriter socketWriter) throws SyntaxException, FolderMissingException {
+    public DBController(String incomingCommand, BufferedWriter socketWriter) throws SyntaxException{
 
         DBTokenizer newToken = new DBTokenizer(incomingCommand);
 

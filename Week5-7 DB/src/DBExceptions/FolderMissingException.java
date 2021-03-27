@@ -7,6 +7,6 @@ public class FolderMissingException extends SyntaxException {
     }
 
     public String toString(){
-        return "Folder already exists";
+        return "Unknown database";
     }
 }

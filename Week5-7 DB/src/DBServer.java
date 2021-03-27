@@ -37,7 +37,8 @@ class DBServer
         }
     }
 
-    private void processNextCommand(BufferedReader socketReader, BufferedWriter socketWriter) throws IOException, NullPointerException
+    private void processNextCommand(BufferedReader socketReader, BufferedWriter socketWriter)
+            throws IOException, NullPointerException
     {
         try {
             String incomingCommand = socketReader.readLine();

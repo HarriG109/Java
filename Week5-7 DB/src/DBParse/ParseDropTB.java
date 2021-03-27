@@ -1,12 +1,8 @@
 package DBParse;
 
-public class ParseUse extends DBParser {
+public class ParseDropTB extends DBParser {
 
-    public ParseUse(String[] commandArray){
-        handleSyntax(commandArray);
-    }
-
-    private void handleSyntax(String[] commandArray){
+    public ParseDropTB(String[] commandArray){
 
         setParse(checkAlphaNumeric(commandArray, "[a-zA-Z0-9]+"));
         if(getParse()){

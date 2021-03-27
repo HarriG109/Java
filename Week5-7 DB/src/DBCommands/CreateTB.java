@@ -1,5 +1,7 @@
 package DBCommands;
 
+import DBExceptions.FileExistsException;
+
 import java.io.*;
 
 public class CreateTB {
@@ -9,12 +11,12 @@ public class CreateTB {
     BufferedWriter bw = null;
     int j = 0;
 
-    public CreateTB(String filePath, String[] commandArray, BufferedWriter socketWriter) {
+    public CreateTB(String filePath, String[] commandArray, BufferedWriter socketWriter) throws FileExistsException {
 
 
         fullFilePath = filePath + File.separator + commandArray[2] + ".tab";
 
-        createFile(fullFilePath, socketWriter);
+        createFile(fullFilePath);
 
         if(commandArray.length > 3) {
             writeToFile(fullFilePath, newTB, commandArray, socketWriter);
@@ -31,12 +33,6 @@ public class CreateTB {
             if(newTB.isFile()) {
                 FileWriter fw = new FileWriter(fullFilePath);
                 bw = new BufferedWriter(fw);
-
-                //Printing commands for checking
-                while (j < commandArray.length){
-                    socketWriter.write(commandArray[j] + "\n");
-                    j++;
-                }
 
                 //Create ID column
                 bw.write("id");
@@ -72,17 +68,16 @@ public class CreateTB {
 
 
     //Create the table file using filepath and name from command
-    public void createFile(String fullFilePath, BufferedWriter socketWriter){
+    public void createFile(String fullFilePath) throws FileExistsException {
         try {
             newTB = new File(fullFilePath);
 
             if (!newTB.exists()) {
                 newTB.createNewFile();
-                socketWriter.write("File created: " + newTB.getName());
             } else {
-                socketWriter.write("[ERROR] File already exists.");
+                FileExistsException fme = new FileExistsException();
+                throw fme;
             }
-            socketWriter.flush();
         }
         catch(IOException ioe) {
             ioe.printStackTrace();

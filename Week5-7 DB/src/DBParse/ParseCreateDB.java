@@ -9,9 +9,9 @@ public class ParseCreateDB extends DBParser{
 
     private void handleSyntax(String[] commandArray){
 
-        setParse(checkAlphaNumeric(commandArray, "[a-zA-Z0-9]+"));
+        setParse(checkAlphaNumeric(commandArray, "[a-zA-Z0-9]+", true));
         if(getParse()){
-            setParse(checkSemiColonandFollowing(commandArray));
+            setParse(checkSemiColonandFollowing(commandArray, true));
         }
     }
 }

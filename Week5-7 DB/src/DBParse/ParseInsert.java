@@ -8,22 +8,22 @@ public class ParseInsert extends DBParser{
     private void handleSyntax(String[] commandArray){
 
         //Check for alphaNumeric spelt table
-        setParse(checkCommandWithIncrement(commandArray, "INTO"));
+        setParse(checkCommand(commandArray, "INTO", true));
 
         if (getParse()) {
 
-            //Check for INTO
-            setParse(checkAlphaNumeric(commandArray, "[a-zA-Z0-9]+"));
+            //Check for table name
+            setParse(checkAlphaNumeric(commandArray, "[a-zA-Z0-9]+", true));
 
             if (getParse()) {
 
                 //Check for VALUES
-                setParse(checkCommandWithIncrement(commandArray, "VALUES"));
+                setParse(checkCommand(commandArray, "VALUES", true));
 
                 if (getParse()) {
 
                     //Check for open bracket
-                    setParse(checkCommandWithIncrement(commandArray, "("));
+                    setParse(checkCommand(commandArray, "(", true));
 
                     if (getParse()) {
 
@@ -33,12 +33,12 @@ public class ParseInsert extends DBParser{
                         if (getParse()) {
 
                             //Check for open bracket
-                            setParse(checkCommandWithIncrement(commandArray, ")"));
+                            setParse(checkCommand(commandArray, ")", true));
 
                             if (getParse()) {
 
                                 //Check semi-colon
-                                setParse(checkSemiColonandFollowing(commandArray));
+                                setParse(checkSemiColonandFollowing(commandArray, true));
                             }
                         }
                     }
@@ -60,44 +60,18 @@ public class ParseInsert extends DBParser{
 
             nocommaStr = commandArray[getIndex()].substring(0, commandArray[getIndex()].length() - 1);
 
-            //Handle string literals
-            if (nocommaStr.substring(0, 1).equals("'")) {
-                if (!nocommaStr.substring(nocommaStr.length() - 1).equals("'")) {
-                    return false;
-                } else {
-                    setIndex(getIndex() + 1);
-                }
-            }
-            //Handle booleans
-            else if (nocommaStr.equals("true") || nocommaStr.equals("false")) {
+            //Handle values
+            if (checkValue(commandArray, nocommaStr, true)) {
                 setIndex(getIndex() + 1);
             }
-            //Handle numerics
-            else if (nocommaStr.matches("\\d+?\\.?\\d*")) {
-                setIndex(getIndex() + 1);
-            } else {
+            else {
                 return false;
             }
         }
 
         //Check once more for final word (which has no comma after)
-        //Handle string literals
-        System.out.println(commandArray[getIndex()].substring(0, 1));
-        if (commandArray[getIndex()].substring(0, 1).equals("'")) {
-
-            if (!commandArray[getIndex()].substring(commandArray[getIndex()].length() - 1).equals("'")) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-        //Handle booleans
-        else if (commandArray[getIndex()].equals("true") || commandArray[getIndex()].equals("false")) {
-
-            return true;
-        }
-        //Handle numerics
-        else if (commandArray[getIndex()].matches("\\d+?\\.?\\d*")) {
+        //Handle values
+        if (checkValue(commandArray, commandArray[getIndex()], true)) {
             return true;
         }
         return false;

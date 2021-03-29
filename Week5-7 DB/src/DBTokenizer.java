@@ -32,16 +32,14 @@ public class DBTokenizer {
         //Split out the semi-token as it's own element
         command = editSemiColon(command);
 
-        System.out.println(stringSpecicalCount(command, "="));
-
         //Split out all operators in case of missing spacing;
         command = editLongOperator(command, "==");
         command = editLongOperator(command, ">=");
         command = editLongOperator(command, "<=");
         command = editLongOperator(command, "!=");
         command = editShortOperator(command, "=");
-        command = editShortOperator(command, ">");
-        command = editShortOperator(command, "<");
+        /*command = editShortOperator(command, ">");
+        command = editShortOperator(command, "<");*/
 
         tokenArray = command.split("\\s+");
         /*\\s|\W to keep only words*/
@@ -161,19 +159,24 @@ public class DBTokenizer {
 
         int i, index;
         index = command.indexOf(operator);
+        System.out.println(index);
 
         if(index != -1){
             //Include = in count string method to get correct count
             for (i = 0; i < (stringSpecicalCount(command, operator)); i++) {
+                System.out.println((stringSpecicalCount(command, operator)));
                  //Make sure it is truly a single operator before editing
                 if(command.charAt(index + 1) != '=' && command.charAt(index - 1) != '>'
                         && command.charAt(index - 1) != '<' && command.charAt(index - 1) != '!'
                         && command.charAt(index - 1) != '=') {
+                    System.out.println("Here");
+                    System.out.println(index);
                     command = command.substring(0, index) + " " + operator + " " + command.substring(index + operator.length());
                 }
 
                 //Plus two to include new space
                 index = command.indexOf(operator, index + 2);
+                System.out.println(index);
 
                 //If index changes to -1 then alter to count for loop finishes
                 if(index == -1){

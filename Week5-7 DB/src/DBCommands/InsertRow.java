@@ -1,5 +1,6 @@
 package DBCommands;
 
+import DBExceptions.DiffInNumOfColsException;
 import DBExceptions.FileMissingException;
 import DBExceptions.NoColumnsException;
 
@@ -7,13 +8,20 @@ import java.io.*;
 
 public class InsertRow {
 
+    public String[] columns;
     public File newTB;
     public String fullFilePath;
     BufferedWriter bw = null;
-    int id;
+    BufferedReader br = null;
 
     public InsertRow(String filePath, String[] commandArray, BufferedWriter socketWriter)
-            throws FileMissingException, NoColumnsException{
+            throws FileMissingException, NoColumnsException, DiffInNumOfColsException {
+
+        //Get number of columns specified
+        System.out.println("Open bracket" + whichArrayElementEqualTo(commandArray, "("));
+        System.out.println("Close bracket" + whichArrayElementEqualTo(commandArray, ")"));
+        int numInsertCols = whichArrayElementEqualTo(commandArray, ")") -
+                whichArrayElementEqualTo(commandArray, "(") - 1;
 
         //Get full filepath from commands
         fullFilePath = filePath + File.separator + commandArray[2] + ".tab";
@@ -21,11 +29,20 @@ public class InsertRow {
         //Try writing to file
         try {
             newTB = new File(fullFilePath);
+            br = new BufferedReader(new FileReader(fullFilePath));
 
             //Check for existing file
             if (newTB.exists()) {
                 if(idNum(fullFilePath) != 0) {
-                    writeToFile(fullFilePath, newTB, commandArray, socketWriter, id);
+                    if(getColumnAmount(br) == numInsertCols) {
+                        System.out.println("Column amount:" + getColumnAmount(br));
+                        System.out.println("Command amount:" + numInsertCols);
+                        writeToFile(fullFilePath, newTB, commandArray);
+                    }
+                    else{
+                        DiffInNumOfColsException dnce = new DiffInNumOfColsException();
+                        throw dnce;
+                    }
                 }
                 else{
                     NoColumnsException nce = new NoColumnsException();
@@ -39,15 +56,35 @@ public class InsertRow {
         }
         catch(IOException ioe) {
             ioe.printStackTrace();
-            System.out.println(ioe);
         }
     }
 
+    //Method to get column number
+    public int getColumnAmount(BufferedReader br) {
+
+        String rowStr;
+
+        try {
+            //Get into string
+            rowStr = br.readLine();
+
+            //Split into 1D array
+            columns = rowStr.split("\t");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //Return number of elements -1 for id column
+        return columns.length - 1;
+    }
+
+
     //Method to write to created file
-    public void writeToFile(String fullFilePath, File newTB, String[] commandArray, BufferedWriter socketWriter, int id){
+    public void writeToFile(String fullFilePath, File newTB, String[] commandArray){
 
         //Find starting position of first bracket and take 1st subsequent element
         int i = whichArrayElementEqualTo(commandArray, "(") + 1;
+        int id;
 
         try {
             if(newTB.isFile()) {

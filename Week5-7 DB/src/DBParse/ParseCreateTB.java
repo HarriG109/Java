@@ -23,7 +23,7 @@ public class ParseCreateTB extends DBParser{
                 if (getParse()) {
 
                     //Check attribute list
-                    setParse(parseAttributeList(commandArray));
+                    setParse(parseAttributeList(commandArray, true));
 
                     if (getParse()) {
 

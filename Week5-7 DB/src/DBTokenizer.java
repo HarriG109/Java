@@ -20,7 +20,7 @@ public class DBTokenizer {
         int i;
 
         //Check for apostrophes
-        if(command.indexOf("'") != -1){
+        if(apostropheCount(command)%2 == 0){
             //If apostrophes convert string literal spaces to dummy char before split
             command = alterStringLiteralSpaces(command);
         }
@@ -38,8 +38,8 @@ public class DBTokenizer {
         command = editLongOperator(command, "<=");
         command = editLongOperator(command, "!=");
         command = editShortOperator(command, "=");
-        /*command = editShortOperator(command, ">");
-        command = editShortOperator(command, "<");*/
+        command = editShortOperator(command, ">");
+        command = editShortOperator(command, "<");
 
         tokenArray = command.split("\\s+");
         /*\\s|\W to keep only words*/
@@ -97,14 +97,15 @@ public class DBTokenizer {
     //Method to edit start bracket if it exists
     public String editOpenBracket(String command){
 
-        int i, index;
+        int index;
         index = command.indexOf("(");
 
-        if(index != -1){
-            for(i = 0; i < (stringSpecicalCount(command, "(")); i++){
-                command = command.substring(0, index + 1) + " " + command.substring(index + 1);
-                index = command.indexOf("(", index + 1);
-            }
+        while(index != -1){
+            command = command.substring(0, index + 1) + " " + command.substring(index + 1);
+
+            //Move past open bracket
+            index = command.indexOf("(", index + 1);
+
         }
         return command;
     }
@@ -115,13 +116,13 @@ public class DBTokenizer {
         int i, index;
         index = command.indexOf(")");
 
-        if(index != -1){
-            for(i = 0; i < (stringSpecicalCount(command, ")")); i++){
-                command = command.substring(0, index) + " " + command.substring(index);
+        while(index != -1){
 
-                //Plus two to include new space
-                index = command.indexOf(")", index + 2);
-            }
+            command = command.substring(0, index) + " " + command.substring(index);
+
+            //Plus two to include new space
+            index = command.indexOf(")", index + 2);
+
         }
         return command;
     }
@@ -139,17 +140,14 @@ public class DBTokenizer {
     //Method to check for long yoperators and space them out as tokens
     public String editLongOperator(String command, String operator){
 
-        int i, index;
+        int index;
         index = command.indexOf(operator);
 
-        if(index != -1){
-            //Include = in count string method to get correct count
-            for (i = 0; i < (stringSpecicalCount(command, operator)); i++) {
+        while(index != -1) {
                command = command.substring(0, index) + " " + operator + " " + command.substring(index + operator.length());
 
                //Plus two to include new space
                index = command.indexOf(operator, index + 2);
-            }
         }
         return command;
     }
@@ -157,44 +155,33 @@ public class DBTokenizer {
     //Method to check for short operators and space them out as tokens
     public String editShortOperator(String command, String operator){
 
-        int i, index;
+        int index;
         index = command.indexOf(operator);
-        System.out.println(index);
 
-        if(index != -1){
-            //Include = in count string method to get correct count
-            for (i = 0; i < (stringSpecicalCount(command, operator)); i++) {
-                System.out.println((stringSpecicalCount(command, operator)));
+        while(index != -1){
                  //Make sure it is truly a single operator before editing
                 if(command.charAt(index + 1) != '=' && command.charAt(index - 1) != '>'
                         && command.charAt(index - 1) != '<' && command.charAt(index - 1) != '!'
                         && command.charAt(index - 1) != '=') {
-                    System.out.println("Here");
-                    System.out.println(index);
                     command = command.substring(0, index) + " " + operator + " " + command.substring(index + operator.length());
                 }
 
                 //Plus two to include new space
                 index = command.indexOf(operator, index + 2);
-                System.out.println(index);
-
-                //If index changes to -1 then alter to count for loop finishes
-                if(index == -1){
-                    index = stringSpecicalCount(command, operator);
-                }
-            }
         }
         return command;
     }
 
-    //Method to count how many signs match parameter in string
-    public int stringSpecicalCount(String command, String symbol){
+    //Method to count instances of apostrophes
+    public int apostropheCount(String command){
 
-        int index = 0, count = 0;
+        int index, count = 0;
+        index = command.indexOf("'");
 
-        while((index = command.indexOf(symbol, index)) != -1){
+        while(index != -1){
+
             count++;
-            index++;
+            index = command.indexOf("'", index + 1);
         }
         return count;
     }

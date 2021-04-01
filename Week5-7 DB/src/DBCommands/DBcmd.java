@@ -4,17 +4,19 @@ import DBExceptions.*;
 
 import java.io.BufferedWriter;
 
-public class DBcmd{
+public class DBcmd {
+
+    public String returnText;
 
     public DBcmd(String filePath, String[] tokenArray, BufferedWriter socketWriter)
             throws FolderExistsException, FolderMissingException, FileExistsException, FileMissingException,
-            UsingDatabaseException, NoColumnsException {
+            UsingDatabaseException, NoColumnsException, DiffInNumOfColsException, ColumnDoesntExistException {
         processCMD(filePath, tokenArray, socketWriter);
     }
 
     public void processCMD(String filePath, String[] commandArray, BufferedWriter socketWriter)
             throws FolderExistsException, FolderMissingException, FileExistsException, FileMissingException,
-            UsingDatabaseException, NoColumnsException {
+            UsingDatabaseException, NoColumnsException, DiffInNumOfColsException, ColumnDoesntExistException {
 
         if(commandArray[0].equals("CREATE")){
 
@@ -54,7 +56,8 @@ public class DBcmd{
         else if(commandArray[0].equals("SELECT")){
 
             //Instantiate object
-            SelectRow getRow = new SelectRow(filePath, commandArray, socketWriter);
+            SelectRow getRow = new SelectRow(filePath, commandArray);
+            /*setReturnString(getRow.returnSelectString());*/
         }
 
         //DROP Class
@@ -71,5 +74,15 @@ public class DBcmd{
                 DropDB dDB = new DropDB(filePath, commandArray[2]);
             }
         }
+    }
+
+    //Method to return string
+    public String returnString(){
+        return returnText;
+    }
+
+    //Method to set return String
+    public void setReturnString(String text){
+        returnText = text;
     }
 }

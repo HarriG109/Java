@@ -50,18 +50,14 @@ public class ParseInsert extends DBParser{
     //Method to parse attribute list
     public boolean parseValueList(String[] commandArray) {
 
-        String nocommaStr;
-
         //Increment counter
         setIndex(getIndex() + 1);
 
         //Check all comma variables
         while (getIndex() < commandArray.length && commandArray[getIndex()].charAt(commandArray[getIndex()].length() - 1) == ',') {
 
-            nocommaStr = commandArray[getIndex()].substring(0, commandArray[getIndex()].length() - 1);
-
             //Handle values
-            if (checkValue(commandArray, nocommaStr, true)) {
+            if (checkValue(commandArray, false)) {
                 setIndex(getIndex() + 1);
             }
             else {
@@ -70,9 +66,11 @@ public class ParseInsert extends DBParser{
         }
 
         //Check once more for final word (which has no comma after)
-        //Handle values
-        if (checkValue(commandArray, commandArray[getIndex()], true)) {
-            return true;
+        if(getIndex() < commandArray.length) {
+
+            if (checkValue(commandArray, false)) {
+                return true;
+            }
         }
         return false;
     }

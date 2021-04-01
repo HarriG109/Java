@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-
 import DBCommands.DBPath;
 import DBExceptions.*;
 
@@ -44,7 +43,8 @@ class DBServer
             String incomingCommand = socketReader.readLine();
             DBController newController = new DBController(incomingCommand, socketWriter);
             /*System.out.println("Received message: " + incomingCommand);*/
-            socketWriter.write("[OK]");
+            //Change this from hard coded to a method which returns a string, so that SELECT is printed back
+            socketWriter.write(newController.getConsoleText());
         }
         catch(SyntaxException e){
             socketWriter.write("[ERROR]: " + e.toString());

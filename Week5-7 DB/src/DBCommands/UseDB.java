@@ -1,8 +1,6 @@
 package DBCommands;
 
 import DBExceptions.FolderMissingException;
-
-import java.io.BufferedWriter;
 import java.io.File;
 
 public class UseDB extends DBCommands.DBPath {

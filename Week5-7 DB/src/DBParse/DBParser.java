@@ -10,21 +10,20 @@ public class DBParser {
     public static boolean parsed;
     public static int index;
 
-    public DBParser(String filePath, String[] commandArray, BufferedWriter socketWriter){
-        parseCMD(filePath, commandArray);
+    public DBParser(String filePath, String[] commandArray){
+        parseCMD(commandArray);
     }
 
     public DBParser() {
     }
 
     //Method to parse commands
-    public void parseCMD(String filePath, String[] commandArray) {
+    public void parseCMD(String[] commandArray) {
 
         setIndex(0);
 
         //Check a command exists
         if (checkCommand(commandArray, "CREATE", false)) {
-
             //Increment counter
             setIndex(getIndex() + 1);
 
@@ -38,9 +37,6 @@ public class DBParser {
                 ParseCreateTB PcTB = new ParseCreateTB(commandArray);
                 return;
 
-            } else {
-                setParse(false);
-                return;
             }
         } else if (checkCommand(commandArray, "USE", false)) {
 
@@ -70,9 +66,31 @@ public class DBParser {
             }
         }
         else if (checkCommand(commandArray, "SELECT", false)) {
+
             ParseSelect Ps = new ParseSelect(commandArray);
             return;
         }
+        else if (checkCommand(commandArray, "UPDATE", false)) {
+
+            ParseUpdate Pu = new ParseUpdate(commandArray);
+            return;
+        }
+        else if (checkCommand(commandArray, "DELETE", false)) {
+
+            ParseDelete Pd = new ParseDelete(commandArray);
+            return;
+        }
+        else if (checkCommand(commandArray, "ALTER", false)) {
+
+            ParseAlter Pa = new ParseAlter(commandArray);
+            return;
+        }
+        else if (checkCommand(commandArray, "JOIN", false)) {
+
+            ParseJoin Pj = new ParseJoin(commandArray);
+            return;
+        }
+        setParse(false);
     }
 
     public void setParse(boolean tf){
@@ -166,11 +184,13 @@ public class DBParser {
         }
     }
 
-    //Method to parse attribute list (INCREMENT)
-    public boolean parseAttributeList(String[] commandArray){
+    //Method to parse attribute list (INCREMENT SWITCH)
+    public boolean parseAttributeList(String[] commandArray, boolean increment){
 
-        //Increment counter
-        setIndex(getIndex() + 1);
+        if(increment == true) {
+            //Increment counter
+            setIndex(getIndex() + 1);
+        }
 
         String nocommaStr;
 
@@ -222,36 +242,101 @@ public class DBParser {
     }
 
     //Method to check value references (INCREMENT Switch)
-    public boolean checkValue(String[] commandArray, String command, boolean increment) {
+    public boolean checkValue(String[] commandArray, boolean increment) {
+
+        String noCommaStr;
 
         if(increment == true) {
             //Increment counter
             setIndex(getIndex() + 1);
         }
 
+        //Remove the comma
+        noCommaStr = commandArray[getIndex()].replace(",", "");
+
         //If there are more commands then continue
         if (getIndex() < commandArray.length) {
 
-            if (command.charAt(0) == '\'') {
+            if (noCommaStr.charAt(0) == '\'') {
 
-                if (!command.substring(command.length() - 1).equals("'")) {
-                    return false;
-                } else {
+                if (noCommaStr.charAt(noCommaStr.length() - 1) == '\'') {
                     return true;
                 }
+                return false;
             }
             //Handle booleans
-            else if (command.equals("true") || command.equals("false")) {
+            else if (noCommaStr.equals("true") || noCommaStr.equals("false")) {
 
                 return true;
             }
             //Handle numerics
-            else if (command.matches("\\d+?\\.?\\d*")) {
+            else if (noCommaStr.matches("^-?\\d*\\.{0,1}\\d+$")) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    //Method to recursively handle conditions
+    public boolean checkConditions(String[] commandArray){
+
+        int bracketCount = 0;
+
+        //Check semi-colon
+        if(checkSemiColonandFollowing(commandArray, true)){
+            if(bracketCount == 0) {
                 return true;
             }
             return false;
         }
+        else if(checkCommand(commandArray, "(", false)) {
+            bracketCount++;
+            if(condition(commandArray, true)){
+                return checkConditions(commandArray);
+            }
+        }
+        else if(checkCommand(commandArray, ")", false)){
+            bracketCount--;
+            if(checkCommand(commandArray, "AND", true)){
+                if(checkCommand(commandArray, "(", true)){
+                    bracketCount++;
+                    return checkConditions(commandArray);
+                }
+            }
+            else if(checkCommand(commandArray, "OR", false)){
+                if(checkCommand(commandArray, "(", true)){
+                    bracketCount++;
+                    return checkConditions(commandArray);
+                }
+            }
+            else if(checkCommand(commandArray, ")", false)){
+                bracketCount--;
+                return checkConditions(commandArray);
+            }
+            else if(checkSemiColonandFollowing(commandArray, false)){
+                return true;
+            }
+            return false;
+        }
+        else{
+            if(condition(commandArray, false)){
+                return checkConditions(commandArray);
+            }
+        }
         return false;
+    }
 
+    //Method to evaluate a condition
+    public boolean condition(String[] commandArray, boolean increment){
+
+        if(checkAlphaNumeric(commandArray, "[a-zA-Z0-9]+", increment)){
+            if(checkOperator(commandArray, true)){
+                if(checkValue(commandArray, true)){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

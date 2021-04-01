@@ -1,34 +1,57 @@
 package DBCommands;
 
+import DBExceptions.ColumnDoesntExistException;
+import DBExceptions.FileMissingException;
+import DBExceptions.NoColumnsException;
 import java.io.*;
+import java.util.*;
 
 public class SelectRow {
 
-    static int k = 0;
-    public String[][] incomingData = new String[1000][100];
-    public String[][] outgoingData = new String[1000][100];
     public String[] columns;
     public String[] rows;
-    public int[] columnNum;
     public BufferedReader br = null;
+    public ArrayList<ArrayList<String>> dataset = new ArrayList<ArrayList<String>>();
+    public ArrayList<String> incomingRows = new ArrayList<String>();
+    //Arraylist of kept columns -> 0 means not kept -> 1 means kept
+    public ArrayList<Integer> keepColumns = new ArrayList<Integer>();
+    public ArrayList<Integer> keepRows = new ArrayList<Integer>();
 
-    public SelectRow(String filePath, String[] commandArray, BufferedWriter socketWriter){
+    public SelectRow(String filePath, String[] commandArray)
+            throws FileMissingException, NoColumnsException, ColumnDoesntExistException {
+
+        int i, whereIndex;
 
         //Read in the file and store as data
         if (returnName(commandArray) != null) {
-            readInFile(filePath, returnName(commandArray), socketWriter);
+            readInFile(filePath, returnName(commandArray));
         }
 
-        //Output columns
+        //Filter rows by where clause
+        whereIndex = commandExistsIndex(commandArray, "WHERE");
+        if(whereIndex != -1) {
+            outputRows(commandArray, whereIndex + 1);
+        }
+
+        //Filter and output columns
         outputCols(columns, commandArray);
+
+        for (i = 0; i < dataset.size(); i++) {
+            System.out.println(dataset.get(i));
+        }
+
+        /*Convert to string to print back to console;
+        selectText=returnSelectString();*/
     }
 
+    //************************************* Storing of data **************************************************//
+
     //Method to return name of table selected
-    public String returnName(String[] commandArray){
+    public String returnName(String[] commandArray) {
         int i = 0;
 
-        while(i < commandArray.length){
-            if(commandArray[i].equals("FROM")){
+        while (i < commandArray.length) {
+            if (commandArray[i].equals("FROM")) {
                 return commandArray[i + 1];
             }
             i++;
@@ -37,150 +60,202 @@ public class SelectRow {
     }
 
     //Method to read in file
-    public void readInFile(String filePath, String name, BufferedWriter socketWriter){
-
-        int i, j;
+    public void readInFile(String filePath, String name) throws FileMissingException, NoColumnsException {
 
         try {
             File selectTB = new File(filePath + File.separator + name + ".tab");
-            br = new BufferedReader(new FileReader(filePath + File.separator + name + ".tab"));
 
             if (selectTB.exists()) {
+                br = new BufferedReader(new FileReader(filePath + File.separator + name + ".tab"));
 
-                //Store first line as column headers
-                storeCol(br, socketWriter);
-
-                //Store remaining data
-                storeData(br);
-
-                /*Print
-                for(i=0; i < outgoingData.length; i++){
-                    for(j=0; j < outgoingData[i].length; j++){
-                        if(outgoingData[i][j] != null){
-                            System.out.println(outgoingData[i][j]);
-                        }
-                    }
-                }*/
+                //Store data
+                storeData(dataset, br);
 
                 br.close();
+            } else {
+                FileMissingException fme = new FileMissingException();
+                throw fme;
             }
-            else {
-                socketWriter.write("[Error] File doesn't exist");
-                socketWriter.flush();
-            }
-        }
-        catch(IOException ioe) {
-            ioe.printStackTrace();
-            System.out.println(ioe);
-        }
-    }
-
-    //Method to store column headers
-    public void storeCol(BufferedReader br, BufferedWriter socketWriter){
-
-        String columnStr = null;
-
-        try {
-            //Read in first line
-            columnStr = br.readLine();
-
-            //Split into column array
-            if(columnStr != null) {
-                columns = columnStr.split("\t");
-            }
-            else{
-                socketWriter.write("[Error] No columns in file");
-                socketWriter.flush();
-            }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     //Method to store data
-    public void storeData(BufferedReader br){
+    public void storeData(ArrayList<ArrayList<String>> ArrayList, BufferedReader br) {
 
-        int i = 0, j;
-        String rowStr = null;
+        int j;
+        String rowStr;
 
         try {
             //Get into string
             rowStr = br.readLine();
 
             //Loop through lines
-            while(rowStr != null){
-
+            while (rowStr != null) {
 
                 //Split into 1D array
                 rows = rowStr.split("\t");
 
-                //Copy into 2D array
-                for (j = 0; j < rows.length; j++) {
-                    incomingData[i][j] = rows[j];
-                }
+                //Clear arraylist every loop
+                incomingRows = new ArrayList<>(Arrays.asList(rows));
 
-                i++;
+                ArrayList.add(incomingRows);
+
                 rowStr = br.readLine();
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    //Method to output a new dataset of columns
-    public void outputCols(String[] columns, String[] commandArray){
+    //***********************************************************************************************************//
 
-        int i = 1, j = 0;
+    //************************************** Manipulating rows  *************************************************//
+    //Method to return index of command
+    public int commandExistsIndex(String[] commandArray, String command) {
+        int i = 0;
 
-        if(commandArray[1] == "*"){
-            outgoingData = incomingData;
+        while (i < commandArray.length) {
+            if (commandArray[i].equals(command)) {
+                return i;
+            }
+            i++;
         }
-        else {
+        return -1;
+    }
+
+    //Method to alter data for the rows we need
+    public void outputRows(String[] commandArray, int whereIndex) {
+
+        int k;
+
+        //Increment index
+        whereIndex++;
+
+        if(commandArray[whereIndex].equals("==")){
+
+            //Initialise the keep column arraylist
+            for (k = 0; k < dataset.size(); k++) {
+                keepRows.add(0);
+            }
+            /*
+            colIndex = conditionDataIndex(commandArray[], );
+*/
+            /*Walk through column headers until a match is found
+            while (j < dataset.get(0).size()) {
+
+                matches = 0;
+
+                //If match then flip bit in keepColumns
+                if (commandArray[i].equals(dataset.get(0).get(j))) {
+                    matches++;
+                    keepColumns.set(j, 1);
+                }
+                if(matches == 0){
+                    ColumnDoesntExistException cdee = new ColumnDoesntExistException();
+                    throw cdee;
+                }
+                j++;
+            }*/
+        }
+    }
+
+    //Method to return the index of the data arraylist
+    public int conditionDataIndex(String[] commandArray, String name) throws ColumnDoesntExistException {
+
+        int j = 0;
+
+        //Walk through data column headers until a match is found
+        while (j < dataset.get(0).size()) {
+
+            //Check name exists in column headers
+            if (name.equals(dataset.get(0).get(j))) {
+                //Return index name was found at
+                return j;
+            }
+            j++;
+        }
+        //If nothing is found throw exception
+        ColumnDoesntExistException cdee = new ColumnDoesntExistException();
+        throw cdee;
+    }
+
+    //Method to return name of table selected
+    public String returnColName(String[] commandArray) {
+        int i = 0;
+
+        while (i < commandArray.length) {
+            if (commandArray[i].equals("WHERE")) {
+                return commandArray[i + 1];
+            }
+            i++;
+        }
+        return null;
+    }
+
+    //***********************************************************************************************************//
+
+    //************************************** Manipulating columns ***********************************************//
+    //Method to output a new dataset of columns
+    public void outputCols(String[] columns, String[] commandArray) throws ColumnDoesntExistException{
+
+        int i = 1, j = 0, k, matches;
+
+        //Initialise the keep column arraylist
+        for (k = 0; k < dataset.get(0).size(); k++) {
+            keepColumns.add(0);
+        }
+
+        if (commandArray[1].equals("*")) {
+            return;
+        } else {
+
+            //Walk through commands
             while (!commandArray[i].equals("FROM")) {
-                System.out.println("Here");
-                while(j < columns.length) {
-                    if (commandArray[i] == columns[j]) {
-                        populateNewData(outgoingData, incomingData, j);
+
+                //Walk through column headers until a match is found
+                while (j < dataset.get(0).size()) {
+
+                    matches = 0;
+
+                    //If match then flip bit in keepColumns
+                    if (commandArray[i].equals(dataset.get(0).get(j))) {
+                        matches++;
+                        keepColumns.set(j, 1);
+                    }
+                    if(matches == 0){
+                        ColumnDoesntExistException cdee = new ColumnDoesntExistException();
+                        throw cdee;
                     }
                     j++;
                 }
                 i++;
             }
         }
+
+        //Remove columns where bits are 0;
+        removeColumns();
     }
 
-    //Method to store the new data
-    public void populateNewData(String[][] outgoingData, String[][] incomingData, int j){
 
-        int i = 0;
+    //Method to remove columns
+    public void removeColumns(){
 
-        while(incomingData[i][j] != null){
-            outgoingData[i][k] = incomingData[i][j];
-            System.out.println(outgoingData[i][k]);
-            i++;
-        }
-        k++;
-    }
-
-    /*Method to create temporary dataset
-    public convertData(String filePath, String[] commandArray, BufferedWriter socketWriter){
-    }
-
-    //Method to analyze variables
-    public void(String filePath, String[] commandArray, BufferedWriter socketWriter)*/
-
-    /*Print the data selected
-    public void printSelect(){
         int i, j;
 
-        for(i=0; i < incomingData.length; i++){
-            for(j=0; j < incomingData[i].length; j++){
-                if(incomingData[i][j] != null){
-                    System.out.println(incomingData[i][j]);
+        //Loop through rows
+        for(i = 0; i < dataset.size(); i++){
+
+            //Loop through columns removing those which match bit = 0
+            //Note you have to go backwards else the index changes as it removes!
+            for (j = keepColumns.size() - 1; j >= 0; j--) {
+                if (keepColumns.get(j) == 0) {
+                    dataset.get(i).remove(j);
                 }
             }
         }
-    }*/
+    }
+
+    //*************************************************************************************************************//
 }

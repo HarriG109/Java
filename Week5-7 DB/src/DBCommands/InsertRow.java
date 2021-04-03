@@ -3,10 +3,11 @@ package DBCommands;
 import DBExceptions.DiffInNumOfColsException;
 import DBExceptions.FileMissingException;
 import DBExceptions.NoColumnsException;
+import DBParse.DBParser;
 
 import java.io.*;
 
-public class InsertRow {
+public class InsertRow extends DBcmd {
 
     public String[] columns;
     public File newTB;
@@ -18,8 +19,6 @@ public class InsertRow {
             throws FileMissingException, NoColumnsException, DiffInNumOfColsException {
 
         //Get number of columns specified
-        System.out.println("Open bracket" + whichArrayElementEqualTo(commandArray, "("));
-        System.out.println("Close bracket" + whichArrayElementEqualTo(commandArray, ")"));
         int numInsertCols = whichArrayElementEqualTo(commandArray, ")") -
                 whichArrayElementEqualTo(commandArray, "(") - 1;
 
@@ -35,8 +34,7 @@ public class InsertRow {
             if (newTB.exists()) {
                 if(idNum(fullFilePath) != 0) {
                     if(getColumnAmount(br) == numInsertCols) {
-                        System.out.println("Column amount:" + getColumnAmount(br));
-                        System.out.println("Command amount:" + numInsertCols);
+                        br.close();
                         writeToFile(fullFilePath, newTB, commandArray);
                     }
                     else{
@@ -65,6 +63,7 @@ public class InsertRow {
         String rowStr;
 
         try {
+            System.out.println("Here 1");
             //Get into string
             rowStr = br.readLine();
 
@@ -91,12 +90,6 @@ public class InsertRow {
                 //Use append option in the filewriter to create new lines
                 FileWriter fw = new FileWriter(fullFilePath, true);
                 bw = new BufferedWriter(fw);
-
-                //Printing commands for checking
-                /*while (j < commandArray.length){
-                    socketWriter.write(commandArray[j] + "\n");
-                    j++;
-                }*/
 
                 //Return ID number
                 id = idNum(fullFilePath);
@@ -147,16 +140,6 @@ public class InsertRow {
         return -1;
     }
 
-    //Method to remove comma's
-    public String removeComma(String element){
-        return element.replace(",", "");
-    }
-
-    //Method to remove apostrophe's
-    public String removeApostrophe(String element){
-        return element.replace("'", "");
-    }
-
     //Method to get number of rows for id
     public int idNum(String fullFilePath){
 
@@ -171,10 +154,7 @@ public class InsertRow {
         }
         catch(IOException ioe) {
             ioe.printStackTrace();
-            System.out.println(ioe);
         }
-
-        //Remove top row as it shouldn't be couted in ID
         return lines;
     }
 }

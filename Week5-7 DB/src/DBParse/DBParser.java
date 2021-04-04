@@ -121,7 +121,7 @@ public class DBParser {
         //If there are more commands then continue
         if(getIndex() < commandArray.length) {
 
-            if (commandArray[getIndex()].equals(command)) {
+            if (commandArray[getIndex()].equalsIgnoreCase(command)) {
 
                 return true;
             }

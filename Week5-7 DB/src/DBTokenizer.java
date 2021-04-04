@@ -41,6 +41,10 @@ public class DBTokenizer {
         command = editShortOperator(command, ">");
         command = editShortOperator(command, "<");
 
+        //trim leading and trailing spaces
+        command = command.trim();
+
+        //Split into array
         tokenArray = command.split("\\s+");
         /*\\s|\W to keep only words*/
 

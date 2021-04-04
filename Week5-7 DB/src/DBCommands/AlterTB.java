@@ -10,11 +10,11 @@ public class AlterTB extends DBcmd {
 
         readInFile(filePath, commandArray[2]);
 
-        if(commandArray[3].equals("ADD")){
+        if(commandArray[3].equalsIgnoreCase("ADD")){
 
             addColumn(commandArray[4]);
         }
-        else if(commandArray[3].equals("DROP")){
+        else if(commandArray[3].equalsIgnoreCase("DROP")){
 
             dropColumn(commandArray[4]);
         }

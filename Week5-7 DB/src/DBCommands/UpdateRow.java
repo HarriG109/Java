@@ -62,10 +62,59 @@ public class UpdateRow extends DBcmd {
                 || commandArray[whereIndex].equals(">") || commandArray[whereIndex].equals("<")) {
             handleInequality(commandArray, whereIndex, colWhereIndex, commandArray[whereIndex]);
         }
+        else if (commandArray[whereIndex].equalsIgnoreCase("LIKE")) {
+            handleLikeOperator(commandArray, whereIndex, colWhereIndex);
+        }
         //TODO: All operators
 
         //Edit the needed rows
         editRows(commandArray);
+    }
+
+    //Method to handle Like operator
+    private void handleLikeOperator(String[] commandArray, int whereIndex, int colWhereIndex)
+            throws ConversionException{
+
+        int k, j = 1;
+        String tableValue, commandValue;
+
+        //Increment whereIndex
+        whereIndex++;
+
+        //Convert command if it can be, else throw exception
+        if(commandArray[whereIndex].charAt(0) == '\'') {
+            commandValue = removeApostrophe(commandArray[whereIndex]);
+        }
+        else{
+            ConversionException ce = new ConversionException();
+            throw ce;
+        }
+
+        //Initialise the keep row arraylist (NOTE: Never edit top row)
+        for (k = 0; k < dataset.size(); k++) {
+            updateRows.add(0);
+        }
+
+        //Walk through rows until a match is found
+        while (j < dataset.size()) {
+
+            //Check a conversion can be made
+            if(!dataset.get(j).get(colWhereIndex).matches("^-?\\d*\\.{0,1}\\d+$") &&
+                    !dataset.get(j).get(colWhereIndex).equals("true") &&
+                    !dataset.get(j).get(colWhereIndex).equals("false")) {
+                tableValue = dataset.get(j).get(colWhereIndex);
+            }
+            else{
+                ConversionException ce = new ConversionException();
+                throw ce;
+            }
+
+            //If match then flip bit in keepRows
+            if (tableValue.contains(commandValue)) {
+                updateRows.set(j, 1);
+            }
+            j++;
+        }
     }
 
     //Method to handle inequality operators
@@ -89,8 +138,7 @@ public class UpdateRow extends DBcmd {
         }
 
         //Initialise the keep row arraylist (NOTE: Never edit top row)
-        updateRows.add(0);
-        for (k = 1; k < dataset.size(); k++) {
+        for (k = 0; k < dataset.size(); k++) {
             updateRows.add(0);
         }
 

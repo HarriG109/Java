@@ -129,19 +129,6 @@ public class InsertRow extends DBcmd {
         }
     }
 
-    //Method to return element number of array which matches symbol
-    public int whichArrayElementEqualTo(String[] commandArray, String text){
-        int k = 0;
-
-        while(k < commandArray.length){
-            if(commandArray[k].equals(text)){
-                return k;
-            }
-            k++;
-        }
-        return -1;
-    }
-
     //Method to get number of rows for id
     public int idNum(String fullFilePath){
 

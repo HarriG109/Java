@@ -28,17 +28,17 @@ public class DBcmd {
             UsingDatabaseException, NoColumnsException, DiffInNumOfColsException, ColumnDoesntExistException,
             ConversionException {
 
-        if(commandArray[0].equals("CREATE")){
+        if(commandArray[0].equalsIgnoreCase("CREATE")){
 
             //CREATE DATABASE Class
-            if(commandArray[1].equals("DATABASE")){
+            if(commandArray[1].equalsIgnoreCase("DATABASE")){
 
                 //Instantiate object
                 CreateDB newDB = new CreateDB(filePath, commandArray[2], socketWriter);
             }
 
             //CREATE TABLE Class
-            else if(commandArray[1].equals("TABLE")){
+            else if(commandArray[1].equalsIgnoreCase("TABLE")){
 
                 //Instantiate object
                 CreateTB newTB = new CreateTB(filePath, commandArray, socketWriter);
@@ -46,16 +46,16 @@ public class DBcmd {
         }
 
         //USE Class
-        else if(commandArray[0].equals("USE")) {
+        else if(commandArray[0].equalsIgnoreCase("USE")) {
 
             //Instantiate object
             UseDB useDB = new UseDB(commandArray[1]);
         }
 
         //INSERT Class
-        else if(commandArray[0].equals("INSERT")){
+        else if(commandArray[0].equalsIgnoreCase("INSERT")){
 
-            if(commandArray[1].equals("INTO")){
+            if(commandArray[1].equalsIgnoreCase("INTO")){
 
                 //Instantiate object
                 InsertRow newRow = new InsertRow(filePath, commandArray, socketWriter);
@@ -63,7 +63,7 @@ public class DBcmd {
         }
 
         //SELECT Class
-        else if(commandArray[0].equals("SELECT")){
+        else if(commandArray[0].equalsIgnoreCase("SELECT")){
 
             //Instantiate object
             SelectRow getRow = new SelectRow(filePath, commandArray);
@@ -71,14 +71,14 @@ public class DBcmd {
         }
 
         //DROP Class
-        else if(commandArray[0].equals("DROP")){
+        else if(commandArray[0].equalsIgnoreCase("DROP")){
 
-            if(commandArray[1].equals("TABLE")){
+            if(commandArray[1].equalsIgnoreCase("TABLE")){
 
                 //Instantiate object
                 DropTB dTB = new DropTB(filePath, commandArray[2]);
             }
-            if(commandArray[1].equals("DATABASE")){
+            if(commandArray[1].equalsIgnoreCase("DATABASE")){
 
                 //Instantiate object
                 DropDB dDB = new DropDB(filePath, commandArray[2]);
@@ -86,21 +86,21 @@ public class DBcmd {
         }
 
         //UPDATE class
-        else if(commandArray[0].equals("UPDATE")){
+        else if(commandArray[0].equalsIgnoreCase("UPDATE")){
 
             //Instantiate object
             UpdateRow uRow = new UpdateRow(filePath, commandArray);
         }
 
         //DELETE class
-        else if(commandArray[0].equals("DELETE")){
+        else if(commandArray[0].equalsIgnoreCase("DELETE")){
 
             //Instantiate object
             DeleteRow dRow = new DeleteRow(filePath, commandArray);
         }
 
         //ALTER class
-        else if(commandArray[0].equals("ALTER")){
+        else if(commandArray[0].equalsIgnoreCase("ALTER")){
 
             //Instantiate object
             AlterTB aTB = new AlterTB(filePath, commandArray);
@@ -125,6 +125,19 @@ public class DBcmd {
     //Method to remove comma's
     public String removeComma(String element){
         return element.replace(",", "");
+    }
+
+    //Method to return command element number of array which matches symbol
+    public int whichArrayElementEqualTo(String[] commandArray, String text){
+        int k = 0;
+
+        while(k < commandArray.length){
+            if(commandArray[k].equals(text)){
+                return k;
+            }
+            k++;
+        }
+        return -1;
     }
 
     //************************************* Storing of data **************************************************//
@@ -217,7 +230,7 @@ public class DBcmd {
         int i = 0;
 
         while (i < commandArray.length) {
-            if (commandArray[i].equals(command)) {
+            if (commandArray[i].equalsIgnoreCase(command)) {
                 return i;
             }
             i++;

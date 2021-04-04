@@ -7,6 +7,6 @@ public class ConversionException extends SyntaxException{
     }
 
     public String toString(){
-        return " Attribute cannot be converted to number";
+        return " Command or Attribute is wrong type for operator";
     }
 }

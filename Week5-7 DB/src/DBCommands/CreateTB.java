@@ -4,7 +4,7 @@ import DBExceptions.FileExistsException;
 
 import java.io.*;
 
-public class CreateTB {
+public class CreateTB extends DBcmd {
 
     public File newTB;
     public String fullFilePath;
@@ -83,19 +83,6 @@ public class CreateTB {
             ioe.printStackTrace();
             System.out.println(ioe);
         }
-    }
-
-    //Method to return element number of array which matches symbol
-    public int whichArrayElementEqualTo(String[] commandArray, String text){
-        int k = 0;
-
-        while(k < commandArray.length){
-            if(commandArray[k].equals(text)){
-                return k;
-            }
-            k++;
-        }
-        return -1;
     }
 
     //Method to remove comma's

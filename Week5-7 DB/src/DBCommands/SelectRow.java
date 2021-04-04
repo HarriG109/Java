@@ -40,7 +40,7 @@ public class SelectRow extends DBcmd {
         int i = 0;
 
         while (i < commandArray.length) {
-            if (commandArray[i].equals("FROM")) {
+            if (commandArray[i].equalsIgnoreCase("FROM")) {
                 return commandArray[i + 1];
             }
             i++;
@@ -77,6 +77,9 @@ public class SelectRow extends DBcmd {
                     || commandArray[whereIndex].equals(">") || commandArray[whereIndex].equals("<")) {
                 handleInequality(commandArray, whereIndex, colIndex, commandArray[whereIndex]);
             }
+            else if (commandArray[whereIndex].equalsIgnoreCase("LIKE")) {
+                handleLikeOperator(commandArray, whereIndex, colIndex);
+            }
 
             //TODO: All operators
 
@@ -85,10 +88,56 @@ public class SelectRow extends DBcmd {
         //TODO: What if brackets? Multiple conditions
     }
 
+    //Method to handle Like operator
+    private void handleLikeOperator(String[] commandArray, int whereIndex, int colIndex)
+            throws ConversionException{
+
+        int k, j = 1;
+        String tableValue, commandValue;
+
+        //Increment whereIndex
+        whereIndex++;
+
+        //Convert command if it can be, else throw exception
+        if(commandArray[whereIndex].charAt(0) == '\'') {
+            commandValue = removeApostrophe(commandArray[whereIndex]);
+        }
+        else{
+            ConversionException ce = new ConversionException();
+            throw ce;
+        }
+
+        //Initialise the keep row arraylist (NOTE: Always keep top row)
+        keepRows.add(1);
+        for (k = 1; k < dataset.size(); k++) {
+            keepRows.add(0);
+        }
+
+        //Walk through rows until a match is found
+        while (j < dataset.size()) {
+
+            //Check a conversion can be made
+            if(!dataset.get(j).get(colIndex).matches("^-?\\d*\\.{0,1}\\d+$") &&
+                    !dataset.get(j).get(colIndex).equals("true") &&
+                    !dataset.get(j).get(colIndex).equals("false")) {
+                tableValue = dataset.get(j).get(colIndex);
+            }
+            else{
+                ConversionException ce = new ConversionException();
+                throw ce;
+            }
+
+            //If match then flip bit in keepRows
+            if (tableValue.contains(commandValue)) {
+                keepRows.set(j, 1);
+            }
+            j++;
+        }
+    }
+
     //Method to handle inequality operators
     private void handleInequality(String[] commandArray, int whereIndex, int colIndex, String inequality)
             throws ConversionException{
-
 
         int k, j = 1;
         float tableValue, commandValue;
@@ -220,7 +269,7 @@ public class SelectRow extends DBcmd {
             }
 
             //Walk through commands
-            while (!commandArray[i].equals("FROM")) {
+            while (!commandArray[i].equalsIgnoreCase("FROM")) {
 
                 matches = 0;
 

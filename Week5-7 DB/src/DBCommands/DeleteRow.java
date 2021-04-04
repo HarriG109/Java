@@ -1,12 +1,8 @@
 package DBCommands;
 
 import DBExceptions.ColumnDoesntExistException;
+import DBExceptions.ConversionException;
 import DBExceptions.FileMissingException;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class DeleteRow extends DBcmd {
@@ -14,7 +10,7 @@ public class DeleteRow extends DBcmd {
     public ArrayList<Integer> deleteRows = new ArrayList<Integer>();
 
     public DeleteRow(String filePath, String[] commandArray)
-            throws FileMissingException, ColumnDoesntExistException{
+            throws FileMissingException, ColumnDoesntExistException, ConversionException{
 
         int whereIndex, i;
 
@@ -33,7 +29,7 @@ public class DeleteRow extends DBcmd {
     //************************************** Manipulating rows  *************************************************
 
     //Method to alter data for the rows we need
-    public void deleteRow(String[] commandArray, int whereIndex) throws ColumnDoesntExistException {
+    public void deleteRow(String[] commandArray, int whereIndex) throws ColumnDoesntExistException, ConversionException {
 
         int colWhereIndex, i;
 
@@ -54,10 +50,81 @@ public class DeleteRow extends DBcmd {
         else if(commandArray[whereIndex].equals("!=")) {
             handleEqualsandNotOperator(commandArray, whereIndex, colWhereIndex, true);
         }
+        else if (commandArray[whereIndex].equals(">=") || commandArray[whereIndex].equals("<=")
+                || commandArray[whereIndex].equals(">") || commandArray[whereIndex].equals("<")) {
+            handleInequality(commandArray, whereIndex, colWhereIndex, commandArray[whereIndex]);
+        }
+
         //TODO: All operators
 
         //Edit the needed rows
         deleteRows();
+    }
+
+    //Method to handle inequality operators
+    private void handleInequality(String[] commandArray, int whereIndex, int colWhereIndex, String inequality)
+            throws ConversionException {
+
+
+        int k, j = 1;
+        float tableValue, commandValue;
+
+        //Increment whereIndex
+        whereIndex++;
+
+        //Convert command if it can be, else throw exception
+        if(commandArray[whereIndex].matches("^-?\\d*\\.{0,1}\\d+$")) {
+            commandValue = Float.parseFloat(commandArray[whereIndex]);
+        }
+        else{
+            ConversionException ce = new ConversionException();
+            throw ce;
+        }
+
+        //Initialise the keep row arraylist (NOTE: Always keep top row)
+        deleteRows.add(0);
+        for (k = 1; k < dataset.size(); k++) {
+            deleteRows.add(0);
+        }
+
+        //Walk through rows until a match is found
+        while (j < dataset.size()) {
+
+            //Check a conversion can be made
+            if(dataset.get(j).get(colWhereIndex).matches("^-?\\d*\\.{0,1}\\d+$")) {
+                tableValue = Float.parseFloat(dataset.get(j).get(colWhereIndex));
+            }
+            else{
+                ConversionException ce = new ConversionException();
+                throw ce;
+            }
+
+            if(inequality.equals(">=")){
+                //If match then flip bit in keepRows
+                if (tableValue >= commandValue) {
+                    deleteRows.set(j, 1);
+                }
+            }
+            else if(inequality.equals("<=")){
+                //If match then flip bit in keepRows
+                if (tableValue <= commandValue) {
+                    deleteRows.set(j, 1);
+                }
+            }
+            else if(inequality.equals(">")){
+                //If match then flip bit in keepRows
+                if (tableValue > commandValue) {
+                    deleteRows.set(j, 1);
+                }
+            }
+            else if(inequality.equals("<")){
+                //If match then flip bit in keepRows
+                if (tableValue < commandValue) {
+                    deleteRows.set(j, 1);
+                }
+            }
+            j++;
+        }
     }
 
     //Method to handle '==','!=' operators

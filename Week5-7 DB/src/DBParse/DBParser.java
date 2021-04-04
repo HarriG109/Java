@@ -278,7 +278,7 @@ public class DBParser {
 
     }
 
-    //Method to recursively handle conditions
+    //Method to recursively handle conditions (NOTE: Not perfect but it works for most!)
     public boolean checkConditions(String[] commandArray){
 
         int bracketCount = 0;

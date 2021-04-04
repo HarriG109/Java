@@ -15,7 +15,8 @@ public class DBcmd {
 
     public DBcmd(String filePath, String[] tokenArray, BufferedWriter socketWriter)
             throws FolderExistsException, FolderMissingException, FileExistsException, FileMissingException,
-            UsingDatabaseException, NoColumnsException, DiffInNumOfColsException, ColumnDoesntExistException {
+            UsingDatabaseException, NoColumnsException, DiffInNumOfColsException, ColumnDoesntExistException,
+            ConversionException {
         processCMD(filePath, tokenArray, socketWriter);
     }
 
@@ -24,7 +25,8 @@ public class DBcmd {
 
     public void processCMD(String filePath, String[] commandArray, BufferedWriter socketWriter)
             throws FolderExistsException, FolderMissingException, FileExistsException, FileMissingException,
-            UsingDatabaseException, NoColumnsException, DiffInNumOfColsException, ColumnDoesntExistException {
+            UsingDatabaseException, NoColumnsException, DiffInNumOfColsException, ColumnDoesntExistException,
+            ConversionException {
 
         if(commandArray[0].equals("CREATE")){
 
@@ -96,6 +98,13 @@ public class DBcmd {
             //Instantiate object
             DeleteRow dRow = new DeleteRow(filePath, commandArray);
         }
+
+        //ALTER class
+        else if(commandArray[0].equals("ALTER")){
+
+            //Instantiate object
+            AlterTB aTB = new AlterTB(filePath, commandArray);
+        }
     }
 
     //Method to return string
@@ -134,6 +143,9 @@ public class DBcmd {
                 //Store data
                 storeData(dataset, br);
 
+                //Balance data for if there's more columns than data
+                balanceData(dataset);
+
                 br.close();
             } else {
                 FileMissingException fme = new FileMissingException();
@@ -168,6 +180,33 @@ public class DBcmd {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void balanceData(ArrayList<ArrayList<String>> ArrayList){
+
+        ArrayList<Integer> colCount = new ArrayList<Integer>();
+        int i, j, colsToAdd;
+
+        for(i = 0; i < ArrayList.size(); i++){
+            colCount.add(ArrayList.get(i).size());
+        }
+
+        for(i = 0; i < ArrayList.size(); i++){
+
+            colsToAdd = colCount.get(0) - colCount.get(i);
+            System.out.println(colsToAdd);
+
+            while(colsToAdd != 0){
+
+                ArrayList.get(i).add(" ");
+                colsToAdd--;
+                System.out.println(colsToAdd);
+            }
+        }
+
+        for(j = 0; j < colCount.size(); j++){
+            System.out.println(colCount.get(j));
         }
     }
 

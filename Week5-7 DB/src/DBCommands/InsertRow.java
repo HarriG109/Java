@@ -7,6 +7,8 @@ import DBParse.DBParser;
 
 import java.io.*;
 
+//TODO: If you delete row and insert ID will mess up
+
 public class InsertRow extends DBcmd {
 
     public String[] columns;

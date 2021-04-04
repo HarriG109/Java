@@ -1,9 +1,9 @@
 package DBCommands;
 
 import DBExceptions.ColumnDoesntExistException;
+import DBExceptions.ConversionException;
 import DBExceptions.FileMissingException;
 import DBExceptions.NoColumnsException;
-import java.io.*;
 import java.util.*;
 
 public class SelectRow extends DBcmd {
@@ -15,11 +15,15 @@ public class SelectRow extends DBcmd {
 
     //TODO: Nocolumn exception in selectRow
     public SelectRow(String filePath, String[] commandArray)
-            throws FileMissingException, NoColumnsException, ColumnDoesntExistException {
+            throws FileMissingException, NoColumnsException, ColumnDoesntExistException, ConversionException {
 
-        int whereIndex;
+        int whereIndex, i;
 
         readInFile(filePath, returnName(commandArray));
+
+        for(i = 0; i < dataset.size(); i++){
+            System.out.println(dataset.get(i));
+        }
 
         //Filter rows by where clause
         whereIndex = commandExistsIndex(commandArray, "WHERE");
@@ -47,7 +51,8 @@ public class SelectRow extends DBcmd {
     //************************************** Manipulating rows  *************************************************//
 
     //Method to alter data for the rows we need
-    public void outputRows(String[] commandArray, int whereIndex) throws ColumnDoesntExistException {
+    public void outputRows(String[] commandArray, int whereIndex)
+            throws ColumnDoesntExistException, ConversionException {
 
         int colIndex;
 
@@ -68,11 +73,82 @@ public class SelectRow extends DBcmd {
             } else if (commandArray[whereIndex].equals("!=")) {
                 handleEqualsandNotOperator(commandArray, whereIndex, colIndex, true);
             }
+            else if (commandArray[whereIndex].equals(">=") || commandArray[whereIndex].equals("<=")
+                    || commandArray[whereIndex].equals(">") || commandArray[whereIndex].equals("<")) {
+                handleInequality(commandArray, whereIndex, colIndex, commandArray[whereIndex]);
+            }
+
             //TODO: All operators
 
             removeRows();
         }
         //TODO: What if brackets? Multiple conditions
+    }
+
+    //Method to handle inequality operators
+    private void handleInequality(String[] commandArray, int whereIndex, int colIndex, String inequality)
+            throws ConversionException{
+
+
+        int k, j = 1;
+        float tableValue, commandValue;
+
+        //Increment whereIndex
+        whereIndex++;
+
+        //Convert command if it can be, else throw exception
+        if(commandArray[whereIndex].matches("^-?\\d*\\.{0,1}\\d+$")) {
+            commandValue = Float.parseFloat(commandArray[whereIndex]);
+        }
+        else{
+            ConversionException ce = new ConversionException();
+            throw ce;
+        }
+
+        //Initialise the keep row arraylist (NOTE: Always keep top row)
+        keepRows.add(1);
+        for (k = 1; k < dataset.size(); k++) {
+            keepRows.add(0);
+        }
+
+        //Walk through rows until a match is found
+        while (j < dataset.size()) {
+
+            //Check a conversion can be made
+            if(dataset.get(j).get(colIndex).matches("^-?\\d*\\.{0,1}\\d+$")) {
+                tableValue = Float.parseFloat(dataset.get(j).get(colIndex));
+            }
+            else{
+                ConversionException ce = new ConversionException();
+                throw ce;
+            }
+
+            if(inequality.equals(">=")){
+                //If match then flip bit in keepRows
+                if (tableValue >= commandValue) {
+                    keepRows.set(j, 1);
+                }
+            }
+            else if(inequality.equals("<=")){
+                //If match then flip bit in keepRows
+                if (tableValue <= commandValue) {
+                    keepRows.set(j, 1);
+                }
+            }
+            else if(inequality.equals(">")){
+                //If match then flip bit in keepRows
+                if (tableValue > commandValue) {
+                    keepRows.set(j, 1);
+                }
+            }
+            else if(inequality.equals("<")){
+                //If match then flip bit in keepRows
+                if (tableValue < commandValue) {
+                    keepRows.set(j, 1);
+                }
+            }
+            j++;
+        }
     }
 
     //Method to handle '==','!=' operators
@@ -201,18 +277,5 @@ public class SelectRow extends DBcmd {
             sb.append("\n");
         }
         return sb.toString();
-
-        //Without brackets but tabs mess up
-        /*int i, j;
-        StringBuilder sb = new StringBuilder();
-
-        for(i = 0; i < dataset.size(); i++) {
-            for (j = 0; j < dataset.get(i).size(); j++) {
-                sb.append(dataset.get(i).get(j));
-                sb.append("\t");
-            }
-            sb.append("\n");
-        }
-        return sb.toString();*/
     }
 }

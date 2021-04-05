@@ -3,9 +3,6 @@ package DBCommands;
 import DBExceptions.ColumnDoesntExistException;
 import DBExceptions.ConversionException;
 import DBExceptions.FileMissingException;
-import DBExceptions.NoColumnsException;
-
-import java.io.*;
 import java.util.ArrayList;
 
 public class UpdateRow extends DBcmd {
@@ -20,9 +17,6 @@ public class UpdateRow extends DBcmd {
         //Read in the file and store as data
         readInFile(filePath, commandArray[1]);
 
-        for(i = 0; i < dataset.size(); i++){
-            System.out.println(dataset.get(i));
-        }
         //Get index of WHERE command
         whereIndex = commandExistsIndex(commandArray, "WHERE");
         //Increment to get the start of the condition
@@ -38,37 +32,36 @@ public class UpdateRow extends DBcmd {
     public void alterRow(String[] commandArray, int whereIndex)
             throws ColumnDoesntExistException, ConversionException {
 
-        int colWhereIndex, i;
+        int colWhereIndex;
 
-        //Index of dataset column which matches name specified in WHERE command
-        colWhereIndex = colNum(commandArray[whereIndex]);
+        if(!commandArray[whereIndex].equals("(")) {
 
-        if(colWhereIndex == -1){
-            ColumnDoesntExistException cdee = new ColumnDoesntExistException();
-            throw cdee;
-        }
+            //Index of dataset column which matches name specified in WHERE command
+            colWhereIndex = colNum(commandArray[whereIndex]);
 
-        //Increment whereIndex
-        whereIndex++;
+            if (colWhereIndex == -1) {
+                ColumnDoesntExistException cdee = new ColumnDoesntExistException();
+                throw cdee;
+            }
 
-        //Assess operator
-        if(commandArray[whereIndex].equals("==")) {
-            handleEqualsandNotOperator(commandArray, whereIndex, colWhereIndex, false);
-        }
-        else if(commandArray[whereIndex].equals("!=")) {
-            handleEqualsandNotOperator(commandArray, whereIndex, colWhereIndex, true);
-        }
-        else if (commandArray[whereIndex].equals(">=") || commandArray[whereIndex].equals("<=")
-                || commandArray[whereIndex].equals(">") || commandArray[whereIndex].equals("<")) {
-            handleInequality(commandArray, whereIndex, colWhereIndex, commandArray[whereIndex]);
-        }
-        else if (commandArray[whereIndex].equalsIgnoreCase("LIKE")) {
-            handleLikeOperator(commandArray, whereIndex, colWhereIndex);
-        }
-        //TODO: All operators
+            //Increment whereIndex
+            whereIndex++;
 
-        //Edit the needed rows
-        editRows(commandArray);
+            //Assess operator
+            if (commandArray[whereIndex].equals("==")) {
+                handleEqualsandNotOperator(commandArray, whereIndex, colWhereIndex, false);
+            } else if (commandArray[whereIndex].equals("!=")) {
+                handleEqualsandNotOperator(commandArray, whereIndex, colWhereIndex, true);
+            } else if (commandArray[whereIndex].equals(">=") || commandArray[whereIndex].equals("<=")
+                    || commandArray[whereIndex].equals(">") || commandArray[whereIndex].equals("<")) {
+                handleInequality(commandArray, whereIndex, colWhereIndex, commandArray[whereIndex]);
+            } else if (commandArray[whereIndex].equalsIgnoreCase("LIKE")) {
+                handleLikeOperator(commandArray, whereIndex, colWhereIndex);
+            }
+
+            //Edit the needed rows
+            editRows(commandArray);
+        }
     }
 
     //Method to handle Like operator
@@ -120,7 +113,6 @@ public class UpdateRow extends DBcmd {
     //Method to handle inequality operators
     private void handleInequality(String[] commandArray, int whereIndex, int colWhereIndex, String inequality)
             throws ConversionException {
-
 
         int k, j = 1;
         float tableValue, commandValue;
@@ -220,10 +212,10 @@ public class UpdateRow extends DBcmd {
         }
     }
 
-    //Method to remove rows
+    //Method to edit rows
     public void editRows(String[] commandArray) throws ColumnDoesntExistException{
 
-        int i, colIndex, valIndex;
+        int i, colIndex;
         String noApostrophe;
 
         //Index of SET column matched with dataset column if it exists
@@ -244,6 +236,4 @@ public class UpdateRow extends DBcmd {
             }
         }
     }
-
-    //***********************************************************************************************************//
 }

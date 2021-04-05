@@ -15,10 +15,10 @@ public class UseDB extends DBCommands.DBPath {
     public void setUsePath(String name) throws FolderMissingException {
 
         //Create new file paths from command name
-        File newDB = new File(getPath() + File.separator + name);
+        File newDB = new File(System.getProperty("user.dir") + File.separator + "Databases" + File.separator + name);
 
         //Create Strings to store
-        newDBPath =  getPath() + File.separator + name;
+        newDBPath =  System.getProperty("user.dir") + File.separator + "Databases" + File.separator + name;
         origDBPath = getPath();
 
         if(newDB.isDirectory()){
@@ -29,6 +29,5 @@ public class UseDB extends DBCommands.DBPath {
             FolderMissingException e = new FolderMissingException();
             throw e;
         }
-
     }
 }

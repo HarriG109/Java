@@ -7,6 +7,6 @@ public class UsingDatabaseException extends SyntaxException{
     }
 
     public String toString(){
-        return "USE detected, command can not be ran while database is in use";
+        return "Current database is in use";
     }
 }

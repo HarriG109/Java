@@ -2,7 +2,6 @@ package DBCommands;
 
 import DBExceptions.FileMissingException;
 
-import java.io.BufferedWriter;
 import java.io.File;
 
 public class DropTB {
@@ -18,6 +17,7 @@ public class DropTB {
         removeTB(fullFilePath);
     }
 
+    //Method to delete specified table
     public void removeTB(String fullFilePath) throws FileMissingException{
 
         newTB = new File(fullFilePath);

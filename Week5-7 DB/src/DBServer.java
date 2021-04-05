@@ -42,8 +42,6 @@ class DBServer
         try {
             String incomingCommand = socketReader.readLine();
             DBController newController = new DBController(incomingCommand, socketWriter);
-            /*System.out.println("Received message: " + incomingCommand);*/
-            //Change this from hard coded to a method which returns a string, so that SELECT is printed back
             socketWriter.write(newController.getConsoleText());
         }
         catch(SyntaxException e){

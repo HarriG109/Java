@@ -4,10 +4,7 @@ import DBExceptions.DiffInNumOfColsException;
 import DBExceptions.FileMissingException;
 import DBExceptions.NoColumnsException;
 import DBParse.DBParser;
-
 import java.io.*;
-
-//TODO: If you delete row and insert ID will mess up
 
 public class InsertRow extends DBcmd {
 
@@ -65,7 +62,6 @@ public class InsertRow extends DBcmd {
         String rowStr;
 
         try {
-            System.out.println("Here 1");
             //Get into string
             rowStr = br.readLine();
 

@@ -5,20 +5,19 @@ import DBExceptions.UsingDatabaseException;
 
 import java.io.*;
 
-public class DropDB {
+public class DropDB extends DBCommands.DBPath {
 
     public File newTB;
     public String fullFilePath;
 
-    public DropDB(String filePath, String name) throws FolderMissingException, UsingDatabaseException {
-
+    public DropDB(String name) throws FolderMissingException, UsingDatabaseException {
 
         //Create full filepath string and file
-        fullFilePath = filePath + File.separator + name;
+        fullFilePath = System.getProperty("user.dir") + File.separator + "Databases" + File.separator + name;
         newTB = new File(fullFilePath);
 
         //Delete specified folder and contents
-        if(filePath.equals((System.getProperty("user.dir") + File.separator + "Databases"))) {
+        if(!getPath().equals(fullFilePath)) {
             if (newTB.isDirectory()) {
                 removeFolder(newTB);
             } else {

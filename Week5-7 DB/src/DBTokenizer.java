@@ -46,15 +46,9 @@ public class DBTokenizer {
 
         //Split into array
         tokenArray = command.split("\\s+");
-        /*\\s|\W to keep only words*/
 
         //Convert string literal dummy chars back to spaces
         revertStringLiteral(tokenArray);
-
-        //Print to check
-        for(i=0; i < tokenArray.length; i++){
-            System.out.println(tokenArray[i]);
-        }
     }
 
     //Method to replace string literal spaces with tabs so the token is not split up

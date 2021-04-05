@@ -19,8 +19,8 @@ public class DBController extends DBPath {
         if(newParse.getParse() == true){
             DBcmd newCommand = new DBcmd(path, newToken.getToken(), socketWriter);
 
-            if(newCommand.returnText != null){
-                setConsoleText("[OK]" + "\n" + newCommand.returnText);
+            if(newCommand.returnString() != null){
+                setConsoleText("[OK]" + "\n" + newCommand.returnString());
             }
             else{
                 setConsoleText("[OK]");

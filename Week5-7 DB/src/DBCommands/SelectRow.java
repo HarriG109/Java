@@ -3,7 +3,6 @@ package DBCommands;
 import DBExceptions.ColumnDoesntExistException;
 import DBExceptions.ConversionException;
 import DBExceptions.FileMissingException;
-import DBExceptions.NoColumnsException;
 import java.util.*;
 
 public class SelectRow extends DBcmd {
@@ -13,17 +12,12 @@ public class SelectRow extends DBcmd {
     public ArrayList<Integer> keepColumns = new ArrayList<Integer>();
     public ArrayList<Integer> keepRows = new ArrayList<Integer>();
 
-    //TODO: Nocolumn exception in selectRow
     public SelectRow(String filePath, String[] commandArray)
-            throws FileMissingException, NoColumnsException, ColumnDoesntExistException, ConversionException {
+            throws FileMissingException, ColumnDoesntExistException, ConversionException {
 
         int whereIndex, i;
 
         readInFile(filePath, returnName(commandArray));
-
-        for(i = 0; i < dataset.size(); i++){
-            System.out.println(dataset.get(i));
-        }
 
         //Filter rows by where clause
         whereIndex = commandExistsIndex(commandArray, "WHERE");
@@ -56,17 +50,18 @@ public class SelectRow extends DBcmd {
 
         int colIndex;
 
-        //Index of dataset column which matches name specified in command
-        colIndex = colNum(commandArray[whereIndex]);
-        if(colIndex == -1){
-            ColumnDoesntExistException cdee = new ColumnDoesntExistException();
-            throw cdee;
-        }
-
-        //Increment whereIndex
-        whereIndex++;
-
         if(!commandArray[whereIndex].equals("(")) {
+
+            //Index of dataset column which matches name specified in command
+            colIndex = colNum(commandArray[whereIndex]);
+            if(colIndex == -1){
+                ColumnDoesntExistException cdee = new ColumnDoesntExistException();
+                throw cdee;
+            }
+
+            //Increment whereIndex
+            whereIndex++;
+
             //Assess operator
             if (commandArray[whereIndex].equals("==")) {
                 handleEqualsandNotOperator(commandArray, whereIndex, colIndex, false);
@@ -81,11 +76,8 @@ public class SelectRow extends DBcmd {
                 handleLikeOperator(commandArray, whereIndex, colIndex);
             }
 
-            //TODO: All operators
-
             removeRows();
         }
-        //TODO: What if brackets? Multiple conditions
     }
 
     //Method to handle Like operator

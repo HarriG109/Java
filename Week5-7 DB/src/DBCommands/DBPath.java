@@ -11,7 +11,6 @@ public class DBPath {
         if (getPath() == null) {
             setPath(System.getProperty("user.dir") + File.separator + "Databases");
             createRoot(getPath());
-            System.out.println(getPath());
         }
     }
 

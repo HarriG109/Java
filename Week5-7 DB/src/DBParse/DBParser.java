@@ -14,6 +14,7 @@ public class DBParser {
         parseCMD(commandArray);
     }
 
+    //Constructor for inheritance
     public DBParser() {
     }
 
@@ -93,24 +94,27 @@ public class DBParser {
         setParse(false);
     }
 
+    //Method to set boolean for parser
     public void setParse(boolean tf){
         parsed = tf;
     }
 
+    //Method to return boolean parse value
     public boolean getParse(){
         return parsed;
     }
 
+    //Method to set index to walk through commands
     public void setIndex(int i){
         index = i;
     }
 
+    //Method to return index value
     public int getIndex(){
-
         return index;
     }
 
-    //Method to evaluate each command with: (INCREMENT Switch)
+    //Method to evaluate each command with: (uses an INCREMENT Switch)
     public boolean checkCommand(String [] commandArray, String command, boolean increment){
 
         if(increment == true) {
@@ -134,7 +138,7 @@ public class DBParser {
         }
     }
 
-    //Method to evaluate alphanumeric (INCREMENT Switch)
+    //Method to evaluate alphanumeric (uses an INCREMENT Switch)
     public boolean checkAlphaNumeric(String [] commandArray, String regexText, boolean increment){
 
         if(increment == true) {
@@ -158,7 +162,7 @@ public class DBParser {
         }
     }
 
-    //Method to check semi-colon (INCREMENT Switch)
+    //Method to check semi-colon (uses an INCREMENT Switch)
     public boolean checkSemiColonandFollowing(String[] commandArray, boolean increment){
 
         if(increment == true) {
@@ -184,7 +188,7 @@ public class DBParser {
         }
     }
 
-    //Method to parse attribute list (INCREMENT SWITCH)
+    //Method to parse attribute list (uses an INCREMENT SWITCH)
     public boolean parseAttributeList(String[] commandArray, boolean increment){
 
         if(increment == true) {
@@ -214,7 +218,7 @@ public class DBParser {
         }
     }
 
-    //Method to evaluate operator (INCREMENT Switch)
+    //Method to evaluate operator (uses an INCREMENT Switch)
     public boolean checkOperator(String [] commandArray, boolean increment){
 
         if(increment == true) {
@@ -228,7 +232,7 @@ public class DBParser {
             if (commandArray[getIndex()].equals("==") || commandArray[getIndex()].equals("!=") ||
                 commandArray[getIndex()].equals(">=") || commandArray[getIndex()].equals("<=") ||
                 commandArray[getIndex()].equals(">") || commandArray[getIndex()].equals("<") ||
-                commandArray[getIndex()].equals("LIKE")){
+                commandArray[getIndex()].equalsIgnoreCase("LIKE")){
 
                 return true;
             }
@@ -241,7 +245,7 @@ public class DBParser {
         }
     }
 
-    //Method to check value references (INCREMENT Switch)
+    //Method to check value references (uses an INCREMENT Switch)
     public boolean checkValue(String[] commandArray, boolean increment) {
 
         String noCommaStr;

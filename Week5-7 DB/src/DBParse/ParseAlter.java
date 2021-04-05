@@ -37,7 +37,7 @@ public class ParseAlter extends DBParser{
         }
     }
 
-    //Method to check alteration type
+    //Method to check alteration type (INCREMENT)
     public boolean alterationType(String[] commandArray){
 
         //Increment counter

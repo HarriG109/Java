@@ -8,9 +8,13 @@ import java.util.Arrays;
 
 public class DBcmd {
 
+    //Text to return to console
     public String returnText;
+    //Array to collect rows from table before converting into below arraylists
     public String[] rows;
+    //Arraylist to store the data from specific commands
     public ArrayList<ArrayList<String>> dataset = new ArrayList<ArrayList<String>>();
+    //Arraylist to store the incoming rows from a specified table
     public ArrayList<String> incomingRows = new ArrayList<String>();
 
     public DBcmd(String filePath, String[] tokenArray, BufferedWriter socketWriter)
@@ -20,9 +24,11 @@ public class DBcmd {
         processCMD(filePath, tokenArray, socketWriter);
     }
 
+    //Constructor needed for extends
     public DBcmd() {
     }
 
+    //Method to process the incoming command
     public void processCMD(String filePath, String[] commandArray, BufferedWriter socketWriter)
             throws FolderExistsException, FolderMissingException, FileExistsException, FileMissingException,
             UsingDatabaseException, NoColumnsException, DiffInNumOfColsException, ColumnDoesntExistException,
@@ -34,7 +40,7 @@ public class DBcmd {
             if(commandArray[1].equalsIgnoreCase("DATABASE")){
 
                 //Instantiate object
-                CreateDB newDB = new CreateDB(filePath, commandArray[2], socketWriter);
+                CreateDB newDB = new CreateDB(commandArray[2], socketWriter);
             }
 
             //CREATE TABLE Class
@@ -81,7 +87,7 @@ public class DBcmd {
             if(commandArray[1].equalsIgnoreCase("DATABASE")){
 
                 //Instantiate object
-                DropDB dDB = new DropDB(filePath, commandArray[2]);
+                DropDB dDB = new DropDB(commandArray[2]);
             }
         }
 
@@ -107,22 +113,22 @@ public class DBcmd {
         }
     }
 
-    //Method to return string
+    //Method to return string for console
     public String returnString(){
         return returnText;
     }
 
-    //Method to set return String
+    //Method to set return String for console
     public void setReturnString(String text){
         returnText = text;
     }
 
-    //Method to remove apostrophe's
+    //Method to remove apostrophe's from string
     public String removeApostrophe(String element){
         return element.replace("'", "");
     }
 
-    //Method to remove comma's
+    //Method to remove comma's from string
     public String removeComma(String element){
         return element.replace(",", "");
     }
@@ -136,6 +142,19 @@ public class DBcmd {
                 return k;
             }
             k++;
+        }
+        return -1;
+    }
+
+    //Method to return index of command
+    public int commandExistsIndex(String[] commandArray, String command) {
+        int i = 0;
+
+        while (i < commandArray.length) {
+            if (commandArray[i].equalsIgnoreCase(command)) {
+                return i;
+            }
+            i++;
         }
         return -1;
     }
@@ -169,7 +188,7 @@ public class DBcmd {
         }
     }
 
-    //Method to store data
+    //Method to store data from read in file
     public void storeData(ArrayList<ArrayList<String>> ArrayList, BufferedReader br) {
 
         String rowStr;
@@ -196,6 +215,7 @@ public class DBcmd {
         }
     }
 
+    //Method to balance out data if an alter is used which adds a blank column
     public void balanceData(ArrayList<ArrayList<String>> ArrayList){
 
         ArrayList<Integer> colCount = new ArrayList<Integer>();
@@ -208,35 +228,16 @@ public class DBcmd {
         for(i = 0; i < ArrayList.size(); i++){
 
             colsToAdd = colCount.get(0) - colCount.get(i);
-            System.out.println(colsToAdd);
 
             while(colsToAdd != 0){
 
                 ArrayList.get(i).add(" ");
                 colsToAdd--;
-                System.out.println(colsToAdd);
             }
-        }
-
-        for(j = 0; j < colCount.size(); j++){
-            System.out.println(colCount.get(j));
         }
     }
 
     //*******************************************************************************************************//
-
-    //Method to return index of command
-    public int commandExistsIndex(String[] commandArray, String command) {
-        int i = 0;
-
-        while (i < commandArray.length) {
-            if (commandArray[i].equalsIgnoreCase(command)) {
-                return i;
-            }
-            i++;
-        }
-        return -1;
-    }
 
     //*************************************** Data Manipulation ************************************************//
 

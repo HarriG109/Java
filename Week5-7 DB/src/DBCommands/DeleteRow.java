@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class DeleteRow extends DBcmd {
 
+    //Arraylist of bits 1 = ON 0 = OFF to determine which rows to delete
     public ArrayList<Integer> deleteRows = new ArrayList<Integer>();
 
     public DeleteRow(String filePath, String[] commandArray)
@@ -31,37 +32,35 @@ public class DeleteRow extends DBcmd {
     //Method to alter data for the rows we need
     public void deleteRow(String[] commandArray, int whereIndex) throws ColumnDoesntExistException, ConversionException {
 
-        int colWhereIndex, i;
+        int colWhereIndex;
 
-        //Index of dataset column which matches name specified in WHERE command
-        colWhereIndex = colNum(commandArray[whereIndex]);
-        if(colWhereIndex == -1){
-            ColumnDoesntExistException cdee = new ColumnDoesntExistException();
-            throw cdee;
-        }
+        if(!commandArray[whereIndex].equals("(")) {
 
-        //Increment whereIndex
-        whereIndex++;
+            //Index of dataset column which matches name specified in WHERE command
+            colWhereIndex = colNum(commandArray[whereIndex]);
+            if (colWhereIndex == -1) {
+                ColumnDoesntExistException cdee = new ColumnDoesntExistException();
+                throw cdee;
+            }
 
-        //Assess operator
-        if(commandArray[whereIndex].equals("==")) {
-            handleEqualsandNotOperator(commandArray, whereIndex, colWhereIndex, false);
-        }
-        else if(commandArray[whereIndex].equals("!=")) {
-            handleEqualsandNotOperator(commandArray, whereIndex, colWhereIndex, true);
-        }
-        else if (commandArray[whereIndex].equals(">=") || commandArray[whereIndex].equals("<=")
-                || commandArray[whereIndex].equals(">") || commandArray[whereIndex].equals("<")) {
-            handleInequality(commandArray, whereIndex, colWhereIndex, commandArray[whereIndex]);
-        }
-        else if (commandArray[whereIndex].equalsIgnoreCase("LIKE")) {
-            handleLikeOperator(commandArray, whereIndex, colWhereIndex);
-        }
+            //Increment whereIndex
+            whereIndex++;
 
-        //TODO: All operators
+            //Assess operator
+            if (commandArray[whereIndex].equals("==")) {
+                handleEqualsandNotOperator(commandArray, whereIndex, colWhereIndex, false);
+            } else if (commandArray[whereIndex].equals("!=")) {
+                handleEqualsandNotOperator(commandArray, whereIndex, colWhereIndex, true);
+            } else if (commandArray[whereIndex].equals(">=") || commandArray[whereIndex].equals("<=")
+                    || commandArray[whereIndex].equals(">") || commandArray[whereIndex].equals("<")) {
+                handleInequality(commandArray, whereIndex, colWhereIndex, commandArray[whereIndex]);
+            } else if (commandArray[whereIndex].equalsIgnoreCase("LIKE")) {
+                handleLikeOperator(commandArray, whereIndex, colWhereIndex);
+            }
 
-        //Edit the needed rows
-        deleteRows();
+            //Edit the needed rows
+            deleteRows();
+        }
     }
 
     //Method to handle Like operator

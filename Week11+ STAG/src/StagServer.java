@@ -4,6 +4,8 @@ import java.util.*;
 
 class StagServer
 {
+    public static ArrayList<LocationData> location = new ArrayList<LocationData>();
+
     public static void main(String args[])
     {
         if(args.length != 2) System.out.println("Usage: java StagServer <entity-file> <action-file>");
@@ -14,6 +16,14 @@ class StagServer
     {
         try {
             ServerSocket ss = new ServerSocket(portNumber);
+
+            //Call parsers
+            //JSONFileParser JSONfp = new JSONFileParser(actionFilename);
+            GraphParserExample GraphPE = new  GraphParserExample(entityFilename, location);
+
+            System.out.println(location.get(0).getLoc());
+            System.out.println(location.get(1).getLoc());
+            System.out.println(location.get(2).getLoc());
             System.out.println("Server Listening");
             while(true) acceptNextConnection(ss);
         } catch(IOException ioe) {

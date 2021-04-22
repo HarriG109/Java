@@ -15,6 +15,7 @@ public class DBClient
             while(true) handleNextCommand(commandLine, socketReader, socketWriter);
         } catch(IOException ioe) {
             System.out.println(ioe);
+            System.out.println(ioe);
         }
     }
 

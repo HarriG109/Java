@@ -13,6 +13,9 @@ public class GraphParserExample {
     }
 
     public static void main(String entityFilename, ArrayList<LocationData> location) {
+
+        int i;
+
         try {
             Parser parser = new Parser();
             FileReader reader = new FileReader(entityFilename);
@@ -55,6 +58,11 @@ public class GraphParserExample {
                 ArrayList<Edge> edges = g.getEdges();
                 for (Edge e : edges){
                     System.out.printf("Path from %s to %s\n", e.getSource().getNode().getId().getId(), e.getTarget().getNode().getId().getId());
+                    for(i=0; i < location.size(); i++){
+                        if(e.getSource().getNode().getId().getId().equals(location.get(i).getLoc())){
+                            location.get(i).addPath(e.getTarget().getNode().getId().getId());
+                        }
+                    }
                 }
             }
 

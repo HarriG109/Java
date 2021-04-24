@@ -1,3 +1,5 @@
+package STAGData;
+
 import STAGExceptions.IndexDoesntExistException;
 
 import java.util.ArrayList;

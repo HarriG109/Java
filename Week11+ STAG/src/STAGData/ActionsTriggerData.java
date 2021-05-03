@@ -1,5 +1,5 @@
 package STAGData;
-
+import org.json.simple.JSONArray;
 import STAGExceptions.IndexDoesntExistException;
 
 import java.util.ArrayList;
@@ -19,18 +19,18 @@ public class ActionsTriggerData {
     }
 
     //Method to add subject to arraylist
-    public void addSubject(String subject){
-        subjectsList.add(subject);
+    public void addSubject(JSONArray subject){
+        subjectsList.addAll(subject);
     }
 
     //Method to add consumed info to arraylist
-    public void addConsumed(String consume){
-        consumedList.add(consume);
+    public void addConsumed(JSONArray consume){
+        consumedList.addAll(consume);
     }
 
     //Method to add produced info to arraylist
-    public void addProduced(String produce){
-        producedList.add(produce);
+    public void addProduced(JSONArray produce){
+        producedList.addAll(produce);
     }
 
     //Method to get trigger name

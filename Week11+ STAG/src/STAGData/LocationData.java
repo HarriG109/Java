@@ -1,7 +1,5 @@
 package STAGData;
 
-import STAGExceptions.IndexDoesntExistException;
-
 import java.util.ArrayList;
 
 public class LocationData {
@@ -49,72 +47,33 @@ public class LocationData {
        return location.get(0);
     }
 
-    //Method to get characters at specific index
-    public String getCharNameOrDesc(int index, boolean descYN) throws IndexDoesntExistException{
-
-        int i = 0;
-
-        //Set index grab if
-        if(descYN){
-            i = 1;
-        }
-
-        if(index >= characterList.size()){
-            IndexDoesntExistException idee = new IndexDoesntExistException();
-            throw idee;
-        }
-        else{
-            return characterList.get(index).get(i);
-        }
+    //Method to get location desc
+    public String getLocDesc(){
+        return location.get(1);
     }
 
-    //Method to get artefact at specific index
-    public String getArtefNameOrDesc(int index, boolean descYN) throws IndexDoesntExistException{
-
-        int i = 0;
-
-        //Set index grab if
-        if(descYN){
-            i = 1;
-        }
-
-        if(index >= artefactList.size()){
-            IndexDoesntExistException idee = new IndexDoesntExistException();
-            throw idee;
-        }
-        else{
-            return artefactList.get(index).get(i);
-        }
+    //Method to get character list
+    public ArrayList<ArrayList<String>> getCharList(){
+        return characterList;
     }
 
-    //Method to get furniture at specific index
-    public String getFurnNameOrDesc(int index, boolean descYN) throws IndexDoesntExistException{
-
-        int i = 0;
-
-        //Set index grab if
-        if(descYN){
-            i = 1;
-        }
-
-        if(index >= furnitureList.size()){
-            IndexDoesntExistException idee = new IndexDoesntExistException();
-            throw idee;
-        }
-        else{
-            return furnitureList.get(index).get(i);
-        }
+    //Method to get artefact list
+    public ArrayList<ArrayList<String>> getArtefactList(){
+        return artefactList;
     }
 
-    //Method to get furniture at specific index
-    public String getPath(int index) throws IndexDoesntExistException{
+    //Method to remove artefact at specific index
+    public void removeArtefact(int artIndex){
+        artefactList.remove(artIndex);
+    }
 
-        if(index >= pathList.size()){
-            IndexDoesntExistException idee = new IndexDoesntExistException();
-            throw idee;
-        }
-        else{
-            return pathList.get(index);
-        }
+    //Method to get furniture list
+    public ArrayList<ArrayList<String>> getFurnitureList(){
+        return furnitureList;
+    }
+
+    //Method to get path list
+    public ArrayList<String> getPaths(){
+            return pathList;
     }
 }

@@ -1,42 +1,35 @@
+import STAGCommand.STAGProcessCommand;
 import STAGData.*;
+import STAGExceptions.IndexDoesntExistException;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
 class StagServer
 {
-    public static ArrayList<LocationData> location = new ArrayList<LocationData>();
+    public static ArrayList<LocationData> locations = new ArrayList<LocationData>();
     public static ArrayList<ActionsTriggerData> triggers = new ArrayList<ActionsTriggerData>();
     public static ArrayList<PlayerData> players = new ArrayList<PlayerData>();
 
-    public static void main(String args[])
+    public static void main(String args[]) throws IndexDoesntExistException
     {
         if(args.length != 2) System.out.println("Usage: java StagServer <entity-file> <action-file>");
         else new StagServer(args[0], args[1], 8888);
     }
 
-    public StagServer(String entityFilename, String actionFilename, int portNumber)
+    public StagServer(String entityFilename, String actionFilename, int portNumber) throws IndexDoesntExistException
     {
         try {
             ServerSocket ss = new ServerSocket(portNumber);
 
             //Call parsers
-            JSONFileParser JSONfp = new JSONFileParser(actionFilename, triggers);
+            JSONFileParser JSONfp = new JSONFileParser();
+            JSONfp.importActions(actionFilename, triggers);
 
-            /*System.out.println(triggers.get(0).getTrig());
-            System.out.println(triggers.get(0).getNarr());
-            System.out.println(triggers.get(0).getSubject(1));
-            System.out.println(triggers.get(0).getConsumed(0));
-            System.out.println(triggers.get(0).getProduced(0));*/
-            GraphParserExample GraphPE = new  GraphParserExample(entityFilename, location);
+            GraphParserExample GraphPE = new  GraphParserExample();
+            GraphPE.importEntities(entityFilename, locations);
 
-
-            /*System.out.println(location.get(0).getLoc());
-            System.out.println(location.get(1).getLoc());
-            System.out.println(location.get(2).getLoc());
-            System.out.println(location.get(0).getPath(0));
-            System.out.println(location.get(1).getPath(0));
-            System.out.println(location.get(2).getPath(0));*/
             System.out.println("Server Listening");
             while(true) acceptNextConnection(ss);
         } catch(IOException ioe) {
@@ -62,16 +55,21 @@ class StagServer
 
     private void processNextCommand(BufferedReader in, BufferedWriter out) throws IOException
     {
-        //See DB processNextCommand for setup
-        //try {
-        //    String incomingCommand = in.readLine();
+        //Create incoming commands as string
         String line = in.readLine();
         out.write("You said... " + line + "\n");
 
-        STAGController newController = new STAGController(line, players);
-        System.out.println(players.get(0).getPlayer());
-        //}
-        //catch {
-        //}
+        //Instantiate object which breaks the incoming command into tokens and get current player
+        STAGHandleIncomingCommand newCommand = new STAGHandleIncomingCommand(line);
+        //Add player if new
+        newCommand.addPlayerIfNew(players);
+
+        //Instantiate object which captures the current player/location
+        STAGProcessCommand pCommand = new STAGProcessCommand(players.get(newCommand.getCurrentPlayerIndex()), locations);
+        //Process the command
+        pCommand.processCommand(newCommand.getTokenArray(), locations, triggers);
+
+        //Print return text
+        out.write(pCommand.returnString());
     }
 }

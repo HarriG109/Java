@@ -12,14 +12,12 @@ import org.json.simple.parser.ParseException;
 public class JSONFileParser {
 
     //Constructor to call parser
-    public JSONFileParser(String actionFilename, ArrayList<ActionsTriggerData> triggers){
-        //Call main on the input file
-        main(actionFilename, triggers);
+    public JSONFileParser(){
     }
 
-    public void main(String actionFilename, ArrayList<ActionsTriggerData> triggers){
+    public void importActions(String actionFilename, ArrayList<ActionsTriggerData> triggers){
 
-        int i, j, k, l;
+        int i;
         JSONParser parser = new JSONParser();
 
         try{
@@ -51,18 +49,10 @@ public class JSONFileParser {
                     //Create a new instance of trigger data
                     ActionsTriggerData trig = new ActionsTriggerData(triggerList.get(i).toString(), narration);
 
-                    //Loop through and add subjects
-                    for(j = 0; j < subjectList.size(); j++){
-                        trig.addSubject(subjectList.get(j).toString());
-                    }
-                    //Loop through and add consumed
-                    for(k = 0; k < consumedList.size(); k++){
-                        trig.addConsumed(consumedList.get(k).toString());
-                    }
-                    //Loop through and add produced
-                    for(l = 0; l < producedList.size(); l++){
-                        trig.addProduced(producedList.get(l).toString());
-                    }
+                    //Add subjects, consumed and produced
+                    trig.addSubject(subjectList);
+                    trig.addConsumed(consumedList);
+                    trig.addProduced(producedList);
 
                     //Add trigger data to arraylist of triggers
                     triggers.add(trig);

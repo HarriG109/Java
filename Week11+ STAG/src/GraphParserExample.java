@@ -8,12 +8,10 @@ import java.util.ArrayList;
 public class GraphParserExample {
 
     //Constructor to call parser
-    public GraphParserExample(String entityFilename, ArrayList<LocationData> location){
-        //Call main on the input file
-        main(entityFilename, location);
+    public GraphParserExample(){
     }
 
-    public static void main(String entityFilename, ArrayList<LocationData> location) {
+    public void importEntities(String entityFilename, ArrayList<LocationData> location) {
 
         int i;
 

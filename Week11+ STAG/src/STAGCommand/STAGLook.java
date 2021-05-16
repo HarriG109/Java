@@ -1,21 +1,9 @@
 package STAGCommand;
 import STAGData.LocationData;
 
-public class STAGLook {
-    String location;
+public class STAGLook extends STAGProcessCommand {
 
-    public STAGLook(LocationData locD){
-        setLookString(getLocInfo(locD));
-    }
-
-    //Method to get current location from player
-    public String getLookString(){
-        return location;
-    }
-
-    //Method to set current location for player
-    public void setLookString(String loc){
-        location = loc;
+    public STAGLook(){
     }
 
     //Method to return string of location data

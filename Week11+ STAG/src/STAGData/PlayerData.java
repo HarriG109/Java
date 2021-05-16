@@ -17,6 +17,7 @@ public class PlayerData {
         //LOCATION:
         //Start should be first location from entities file i.e. first instance in entities
         setPlayerLocIndex(0);
+        //Starting Health will be 3
         playerHealth = 3;
     }
 
@@ -53,7 +54,22 @@ public class PlayerData {
     }
 
     //Method to get player health
-    public int health(){
+    public int getHealth(){
         return playerHealth;
+    }
+
+    //Method to set player health
+    public void setHealth(int health){
+        playerHealth = health;
+    }
+
+    //Method to reduce player health
+    public void reduceHealth(){
+        setHealth(getHealth() - 1);
+    }
+
+    //Method to increase player health
+    public void increaseHealth(){
+        setHealth(getHealth() + 1);
     }
 }

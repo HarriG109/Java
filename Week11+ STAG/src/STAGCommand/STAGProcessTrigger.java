@@ -2,19 +2,22 @@ package STAGCommand;
 import STAGData.ActionsTriggerData;
 import STAGData.LocationData;
 import STAGData.PlayerData;
+
+import javax.xml.stream.Location;
 import java.util.ArrayList;
 
 public class STAGProcessTrigger extends STAGProcessCommand {
 
     public ActionsTriggerData currTrigger;
-
+    public LocationData producedLoc;
+    public String type;
     public STAGProcessTrigger(){
     }
 
     //Method to process a trigger
     public void processTrigger(String[] commands, LocationData currLoc,
                                PlayerData currPlayer, ArrayList<ActionsTriggerData> triggers,
-                               LocationData unplacedLoc, ArrayList<LocationData> locations){
+                               ArrayList<LocationData> locations){
 
         if(setCurrentTriggerIfExists(commands[getIndex()], triggers)){
 
@@ -25,13 +28,11 @@ public class STAGProcessTrigger extends STAGProcessCommand {
             //Check the next command matches the trigger subject
             if(doesCommandMatchSubject(commands[getIndex()], getCurrTrigger().getSubjects())){
 
-
                 //Check subjects for trigger match current inventory/furniture in current location
                 if(allSubjectsHere(getCurrTrigger().getSubjects(), currLoc, currPlayer)){
 
-
                     //Create the produced object
-                    createProduced(getCurrTrigger().getProduced(), currLoc, currPlayer, unplacedLoc, locations);
+                    createProduced(getCurrTrigger().getProduced(), currLoc, currPlayer, locations);
                     setReturnString(getCurrTrigger().getNarr());
 
                     //Remove the consumed items
@@ -61,6 +62,16 @@ public class STAGProcessTrigger extends STAGProcessCommand {
             }
         }
         return false;
+    }
+
+    //Set the current trigger
+    public void setCurrentTrigger(ActionsTriggerData trigger){
+        currTrigger = trigger;
+    }
+
+    //Get current trigger
+    public ActionsTriggerData getCurrTrigger(){
+        return currTrigger;
     }
 
     //Check if subject exists
@@ -121,25 +132,22 @@ public class STAGProcessTrigger extends STAGProcessCommand {
         return -1;
     }
 
-    //Set the current trigger
-    public void setCurrentTrigger(ActionsTriggerData trigger){
-        currTrigger = trigger;
-    }
-
-    //Get current trigger
-    public ActionsTriggerData getCurrTrigger(){
-        return currTrigger;
-    }
-
     //Remove consumed
     public void removeConsumed(ArrayList<String> consumed, LocationData currLoc, PlayerData currPlayer){
 
         for (String c: consumed) {
-            if (checkStringIn2DArrayList(c, currLoc.getFurnitureList())) {
+            if(c.equalsIgnoreCase("Health")){
+                currPlayer.reduceHealth();
+            }
+            else if (checkStringIn2DArrayList(c, currLoc.getFurnitureList())) {
                 //Remove from current location furniture if matched
                 currLoc.getFurnitureList().remove(getIndexofStringin2DArrayList(c, currLoc.getFurnitureList()));
             }
-            if (checkStringIn2DArrayList(c, currPlayer.getPlayerInv())) {
+            else if (checkStringIn2DArrayList(c, currLoc.getCharList())) {
+                //Remove from current location furniture if matched
+                currLoc.getCharList().remove(getIndexofStringin2DArrayList(c, currLoc.getCharList()));
+            }
+            else if (checkStringIn2DArrayList(c, currPlayer.getPlayerInv())) {
                 //Remove from current player inventory if matched
                 currPlayer.getPlayerInv().remove(getIndexofStringin2DArrayList(c, currPlayer.getPlayerInv()));
             }
@@ -148,81 +156,109 @@ public class STAGProcessTrigger extends STAGProcessCommand {
 
     //Produce whats produced
     public void createProduced(ArrayList<String> produced, LocationData currLoc,
-                               PlayerData currPlayer, LocationData unplacedLoc,
+                               PlayerData currPlayer,
                                ArrayList<LocationData> locations){
 
         for(String p: produced) {
-
-            //Find in unplaced and return the match type
-            handleProduced(p, unplacedLoc, currLoc, currPlayer, locations);
+            if(p.equalsIgnoreCase("Health")){
+                currPlayer.increaseHealth();
+            }
+            else {
+                //Find in unplaced and return the match type
+                handleProduced(p, currLoc, currPlayer, locations);
+            }
         }
     }
 
     //Method to return the type of the unplaced object which is going to be produced
-    public void handleProduced(String produced, LocationData unplacedLoc,
-                               LocationData currLoc, PlayerData currPlayer,
+    public void handleProduced(String produced, LocationData currLoc, PlayerData currPlayer,
                                ArrayList<LocationData> locations){
+
         int i;
 
-        if(checkStringIn2DArrayList(produced, unplacedLoc.getArtefactList())){
-            //Get index of unplaced item
-            i = getIndexofStringin2DArrayList(produced, unplacedLoc.getArtefactList());
+        //Get index of location the produced item resides
+        findProducedInstance(produced, locations);
 
-            //Use index to place object into player inventory and description;
-            currPlayer.addPlayerInv(unplacedLoc.getArtefactList().get(i).get(0),
-                    unplacedLoc.getArtefactList().get(i).get(1));
-
-            //Remove artefact from unplaced
-            unplacedLoc.getArtefactList().remove(produced);
-        }
-        else if(checkStringIn2DArrayList(produced, unplacedLoc.getFurnitureList())){
-            //Get index of unplaced item
-            i = getIndexofStringin2DArrayList(produced, unplacedLoc.getFurnitureList());
-
-            //Use index to place object into player inventory and description;
-            currLoc.addFurniture(unplacedLoc.getFurnitureList().get(i).get(0),
-                    unplacedLoc.getFurnitureList().get(i).get(1));
-
-            //Remove artefact from unplaced
-            unplacedLoc.getFurnitureList().remove(produced);
-        }
-        else if(checkStringIn2DArrayList(produced, unplacedLoc.getCharList())){
-            //Get index of unplaced item
-            i = getIndexofStringin2DArrayList(produced, unplacedLoc.getCharList());
-
-            //Use index to place object into player inventory and description;
-            currLoc.addCharacter(unplacedLoc.getCharList().get(i).get(0),
-                    unplacedLoc.getCharList().get(i).get(1));
-
-            //Remove artefact from unplaced
-            unplacedLoc.getCharList().remove(produced);
-        }
-        else if(checkStringIn2DArrayList(produced, unplacedLoc.getCharList())){
-            //Get index of unplaced item
-            i = getIndexofStringin2DArrayList(produced, unplacedLoc.getCharList());
-
-            //Use index to place object into player inventory and description;
-            currLoc.addCharacter(unplacedLoc.getCharList().get(i).get(0),
-                    unplacedLoc.getCharList().get(i).get(1));
-
-            //Remove artefact from unplaced
-            unplacedLoc.getCharList().remove(produced);
-        }
-        else if(getLocIndex(produced, locations) != -1){
+        if(getType().equals("L")){
             currLoc.addPath(produced);
+        }
+        else if(getType().equals("A")){
+            i = getIndexofStringin2DArrayList(produced, getProducedLoc().getArtefactList());
+
+            //Use index to place object into player inventory and description;
+            currPlayer.addPlayerInv(getProducedLoc().getArtefactList().get(i).get(0),
+                    getProducedLoc().getArtefactList().get(i).get(1));
+
+            //Remove furniture from unplaced
+            getProducedLoc().removeArtefact(i);
+        }
+        else if(getType().equals("F")){
+            //Get index of unplaced item
+            i = getIndexofStringin2DArrayList(produced, getProducedLoc().getFurnitureList());
+
+            //Use index to place furniture into current location;
+            currLoc.addFurniture(getProducedLoc().getFurnitureList().get(i).get(0),
+                    getProducedLoc().getFurnitureList().get(i).get(1));
+
+            //Remove furniture from unplaced
+            getProducedLoc().removeFurniture(i);
+        }
+        else if(getType().equals("C")){
+
+            //Get index of unplaced item
+            i = getIndexofStringin2DArrayList(produced, getProducedLoc().getCharList());
+
+            //Use index to place character into current location;
+            currLoc.addCharacter(getProducedLoc().getCharList().get(i).get(0),
+                    getProducedLoc().getCharList().get(i).get(1));
+
+            //Remove furniture from unplaced
+            getProducedLoc().removeCharacter(i);
         }
     }
 
-    //Get new index of location based on comparison with string
-    public int getLocIndex(String commandLoc, ArrayList<LocationData> locations){
-        int i;
+    public void setProducedLoc(LocationData location){
+        producedLoc = location;
+    }
 
-        for(i = 0; i < locations.size(); i++){
-            if(locations.get(i).getLoc().equals(commandLoc)){
-                return i;
+    public LocationData getProducedLoc(){
+        return producedLoc;
+    }
+
+    public void setType(String objectType){
+        type = objectType;
+    }
+
+    public String getType(){
+        return type;
+    }
+
+    //Method to find the produced item and set the location of it and the type of object
+    public void findProducedInstance(String produced, ArrayList<LocationData> locations){
+
+        for (LocationData l: locations) {
+            if(l.getLoc().equals(produced)){
+                setType("L");
+                setProducedLoc(l);
+            }
+            for(ArrayList<String> s: l.getFurnitureList()){
+                if(s.get(0).equals(produced)){
+                    setType("F");
+                    setProducedLoc(l);
+                }
+            }
+            for(ArrayList<String> s: l.getArtefactList()){
+                if(s.get(0).equals(produced)){
+                    setType("A");
+                    setProducedLoc(l);
+                }
+            }
+            for(ArrayList<String> s: l.getCharList()){
+                if(s.get(0).equals(produced)){
+                    setType("C");
+                    setProducedLoc(l);
+                }
             }
         }
-        //Should never hit this due to pathExist
-        return -1;
     }
 }

@@ -3,7 +3,7 @@ import STAGData.LocationData;
 import STAGData.PlayerData;
 import java.util.ArrayList;
 
-public class STAGGoTo extends STAGProcessCommand {
+public class STAGGoTo extends STAGLook {
 
     public boolean exists;
 
@@ -20,7 +20,7 @@ public class STAGGoTo extends STAGProcessCommand {
         if(exists){
             //Update player location
             currPlayer.setPlayerLocIndex(getNewLocIndex(commands[getIndex()], locations));
-            setReturnString("You have arrived at " + commands[getIndex()]);
+            setReturnString(getLocInfo(currLoc));
         }
         else{
             setReturnString("Path doesn't exist");

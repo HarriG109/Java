@@ -66,6 +66,16 @@ public class LocationData {
         artefactList.remove(artIndex);
     }
 
+    //Method to remove artefact at specific index
+    public void removeCharacter(int charIndex){
+        characterList.remove(charIndex);
+    }
+
+    //Method to remove artefact at specific index
+    public void removeFurniture(int furnIndex){
+        furnitureList.remove(furnIndex);
+    }
+
     //Method to get furniture list
     public ArrayList<ArrayList<String>> getFurnitureList(){
         return furnitureList;

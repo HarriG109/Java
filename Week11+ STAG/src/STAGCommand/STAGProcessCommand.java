@@ -11,7 +11,6 @@ public class STAGProcessCommand {
     public static String returnText;
     public PlayerData currPlayer;
     public LocationData currLoc;
-    public LocationData unplacedLoc;
 
     /*"inventory" (or "inv" for short): lists all of the artefacts currently being carried by the player
         "get x": picks up a specified artefact from current location and puts it into player's inventory
@@ -23,7 +22,6 @@ public class STAGProcessCommand {
     public STAGProcessCommand(PlayerData player, ArrayList<LocationData> location) {
         currPlayer = player;
         currLoc = location.get(currPlayer.getPlayerLocIndex());
-        unplacedLoc = location.get(unplacedIndex(location));
     }
 
     //Constructor needed for extends
@@ -65,14 +63,19 @@ public class STAGProcessCommand {
         else if(commands[getIndex()].equalsIgnoreCase("look")) {
 
             //Create new instance of look
-            STAGLook stgLk = new STAGLook(currLoc);
-            setReturnString(stgLk.getLookString());
+            STAGLook stgLk = new STAGLook();
+            //Create look string and set as return string
+            setReturnString(stgLk.getLocInfo(currLoc));
+        }
+        else if(commands[getIndex()].equalsIgnoreCase("health")) {
+
+            setReturnString("Health: " + String.valueOf(currPlayer.getHealth()));
         }
         else{
 
             //checkTriggers
             STAGProcessTrigger stgTrig = new STAGProcessTrigger();
-            stgTrig.processTrigger(commands, currLoc, currPlayer, triggers, unplacedLoc, location);
+            stgTrig.processTrigger(commands, currLoc, currPlayer, triggers, location);
         }
     }
 

@@ -12,12 +12,6 @@ public class STAGProcessCommand {
     public PlayerData currPlayer;
     public LocationData currLoc;
 
-    /*"inventory" (or "inv" for short): lists all of the artefacts currently being carried by the player
-        "get x": picks up a specified artefact from current location and puts it into player's inventory
-        "drop x": puts down an artefact from player's inventory and places it into the current location
-        "goto x": moves from one location to another (if there is a path between the two)
-        "look": describes the entities in the current location and lists the paths to other locations*/
-
     //Constructor which sets current player/location
     public STAGProcessCommand(PlayerData player, ArrayList<LocationData> location) {
         currPlayer = player;
@@ -77,6 +71,11 @@ public class STAGProcessCommand {
             STAGProcessTrigger stgTrig = new STAGProcessTrigger();
             stgTrig.processTrigger(commands, currLoc, currPlayer, triggers, location);
         }
+
+        //Check for death
+        if(currPlayer.getHealth() == 0){
+            playerDeath(currPlayer, currLoc);
+        }
     }
 
     //Method to return string for console
@@ -99,16 +98,23 @@ public class STAGProcessCommand {
         return index;
     }
 
-    //Method to return unplaced location index
-    public int unplacedIndex(ArrayList<LocationData> locations){
+    //Method to perform death actions
+    public void playerDeath(PlayerData currPlayer, LocationData currLoc){
+
+        addInvToLoc(currPlayer, currLoc);
+        currPlayer.setHealth(3);
+        currPlayer.setPlayerLocIndex(0);
+        currPlayer.wipeInv();
+        setReturnString(returnString() + "\nYou ran out of health and have died!");
+
+    }
+
+    //Method to move all inventory items into current location
+    public void addInvToLoc(PlayerData currPlayer, LocationData currLoc){
         int i;
 
-        for(i = 0; i < locations.size(); i++){
-            if(locations.get(i).getLoc().equalsIgnoreCase("unplaced")){
-                return i;
-            }
+        for(i=0; i < currPlayer.getPlayerInv().size(); i++){
+            currLoc.addArtefact(currPlayer.getPlayerInv().get(i).get(0), currPlayer.getPlayerInv().get(i).get(1));
         }
-        //Should never hit this as there should always be unplaced
-        return -1;
     }
 }

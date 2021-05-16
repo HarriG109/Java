@@ -53,6 +53,15 @@ public class PlayerData {
         playerInv.remove(artIndex);
     }
 
+    //Method to wipe entire inventory (For death)
+    public void wipeInv(){
+        int i;
+
+        for(i=0; i< playerInv.size(); i++){
+            playerInv.remove(i);
+        }
+    }
+
     //Method to get player health
     public int getHealth(){
         return playerHealth;

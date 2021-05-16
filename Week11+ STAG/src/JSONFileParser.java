@@ -2,7 +2,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.FileReader;
 import java.util.ArrayList;
-
 import STAGData.ActionsTriggerData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -33,16 +32,7 @@ public class JSONFileParser {
                 JSONArray consumedList = (JSONArray) jsonNumber.get("consumed");
                 JSONArray producedList = (JSONArray) jsonNumber.get("produced");
                 String narration = (String) jsonNumber.get("narration");
-                /*.out.println("\n");
-                System.out.println(triggers);
-                System.out.println("\n");
-                System.out.println(subjects);
-                System.out.println("\n");
-                System.out.println(consumed);
-                System.out.println("\n");
-                System.out.println(produced);
-                System.out.println("\n");
-                System.out.println(narration);*/
+
                 //Loop through triggers creating instances of STAGData.ActionsTriggerData
                 for(i = 0; i < triggerList.size(); i++){
 

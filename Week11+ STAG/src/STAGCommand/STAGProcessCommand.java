@@ -2,7 +2,6 @@ package STAGCommand;
 import STAGData.ActionsTriggerData;
 import STAGData.LocationData;
 import STAGData.PlayerData;
-
 import java.util.ArrayList;
 
 public class STAGProcessCommand {
@@ -12,6 +11,7 @@ public class STAGProcessCommand {
     public static String returnText;
     public PlayerData currPlayer;
     public LocationData currLoc;
+    public LocationData unplacedLoc;
 
     /*"inventory" (or "inv" for short): lists all of the artefacts currently being carried by the player
         "get x": picks up a specified artefact from current location and puts it into player's inventory
@@ -23,20 +23,19 @@ public class STAGProcessCommand {
     public STAGProcessCommand(PlayerData player, ArrayList<LocationData> location) {
         currPlayer = player;
         currLoc = location.get(currPlayer.getPlayerLocIndex());
+        unplacedLoc = location.get(unplacedIndex(location));
     }
 
     //Constructor needed for extends
     public STAGProcessCommand(){
-
     }
 
     public void processCommand(String[] commands, ArrayList<LocationData> location, ArrayList<ActionsTriggerData> triggers){
 
+        //Set the starting index value
         setIndex(0);
 
-        /*System.out.println(commands[getIndex()]);
-        System.out.println(commands[0]);*/
-
+        //Check first command
         if(commands[getIndex()].equalsIgnoreCase("inv") ||
                 commands[getIndex()].equalsIgnoreCase("inventory")) {
 
@@ -70,11 +69,10 @@ public class STAGProcessCommand {
             setReturnString(stgLk.getLookString());
         }
         else{
+
             //checkTriggers
             STAGProcessTrigger stgTrig = new STAGProcessTrigger();
-            //stgTrig.checkTrigger(commands, currPlayer, currLoc, trigger);
-            //Need boolean to state if trigger activated
-            //setReturnString("Unknown Action");
+            stgTrig.processTrigger(commands, currLoc, currPlayer, triggers, unplacedLoc, location);
         }
     }
 
@@ -96,5 +94,18 @@ public class STAGProcessCommand {
     //Method to return index value
     public int getIndex() {
         return index;
+    }
+
+    //Method to return unplaced location index
+    public int unplacedIndex(ArrayList<LocationData> locations){
+        int i;
+
+        for(i = 0; i < locations.size(); i++){
+            if(locations.get(i).getLoc().equalsIgnoreCase("unplaced")){
+                return i;
+            }
+        }
+        //Should never hit this as there should always be unplaced
+        return -1;
     }
 }

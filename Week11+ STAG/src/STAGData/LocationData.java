@@ -1,5 +1,4 @@
 package STAGData;
-
 import java.util.ArrayList;
 
 public class LocationData {

@@ -18,7 +18,7 @@ class StagServer
         else new StagServer(args[0], args[1], 8888);
     }
 
-    public StagServer(String entityFilename, String actionFilename, int portNumber) throws IndexDoesntExistException
+    public StagServer(String entityFilename, String actionFilename, int portNumber)
     {
         try {
             ServerSocket ss = new ServerSocket(portNumber);
@@ -70,6 +70,8 @@ class StagServer
         pCommand.processCommand(newCommand.getTokenArray(), locations, triggers);
 
         //Print return text
-        out.write(pCommand.returnString());
+        if(pCommand.returnString() != null) {
+            out.write(pCommand.returnString());
+        }
     }
 }

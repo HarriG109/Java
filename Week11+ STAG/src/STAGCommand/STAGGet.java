@@ -14,6 +14,7 @@ public class STAGGet extends STAGProcessCommand {
     //Handling two words could be problematic.
     public void collectItemIfExists(String[] commands, PlayerData currPlayer, LocationData currLoc){
 
+        //Increment commands
         setIndex(getIndex() + 1);
 
         itemExists = checkArtefactInLocation(commands[getIndex()], currLoc, currPlayer);

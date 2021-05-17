@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 public class STAGProcessCommand {
 
-    public static int index;
     //Text to return to console
     public static String returnText;
     public PlayerData currPlayer;
@@ -22,46 +21,44 @@ public class STAGProcessCommand {
     public STAGProcessCommand(){
     }
 
-    public void processCommand(String[] commands, ArrayList<LocationData> location, ArrayList<ActionsTriggerData> triggers){
-
-        //Set the starting index value
-        setIndex(0);
+    public void processCommand(String[] commands, ArrayList<LocationData> location,
+                               ArrayList<ActionsTriggerData> triggers){
 
         //Check first command
-        if(commands[getIndex()].equalsIgnoreCase("inv") ||
-                commands[getIndex()].equalsIgnoreCase("inventory")) {
+        if(checkExpectedCommand(commands, "inv") ||
+                checkExpectedCommand(commands, "inventory")) {
 
             //Create new instance of inventory
             STAGInv stgi = new STAGInv(currPlayer);
             setReturnString(stgi.getInvString());
         }
-        else if(commands[getIndex()].equalsIgnoreCase("get")) {
+        else if(checkExpectedCommand(commands, "get")) {
 
             //Create new instance of get
             STAGGet stgGet = new STAGGet();
             stgGet.collectItemIfExists(commands, currPlayer, currLoc);
         }
-        else if(commands[getIndex()].equalsIgnoreCase("drop")) {
+        else if(checkExpectedCommand(commands, "drop")) {
 
             //Create new instance of get
             STAGDrop stgDrop = new STAGDrop();
             stgDrop.dropItemIfExists(commands, currPlayer, currLoc);
         }
-        else if(commands[getIndex()].equalsIgnoreCase("goto")) {
+        else if(checkExpectedCommand(commands, "goto")) {
 
             //Create new instance of goto
             STAGGoTo stgGo = new STAGGoTo();
             //Change the location
             stgGo.alterLoc(commands, currPlayer, currLoc, location);
         }
-        else if(commands[getIndex()].equalsIgnoreCase("look")) {
+        else if(checkExpectedCommand(commands, "look")) {
 
             //Create new instance of look
             STAGLook stgLk = new STAGLook();
             //Create look string and set as return string
             setReturnString(stgLk.getLocInfo(currLoc));
         }
-        else if(commands[getIndex()].equalsIgnoreCase("health")) {
+        else if(checkExpectedCommand(commands, "health")) {
 
             setReturnString("Health: " + String.valueOf(currPlayer.getHealth()));
         }
@@ -75,6 +72,11 @@ public class STAGProcessCommand {
         //Check for death
         if(currPlayer.getHealth() == 0){
             playerDeath(currPlayer, currLoc);
+
+            //Create new instance of look
+            STAGLook stgLk = new STAGLook();
+            //Create look string and set as return string
+            setReturnString(stgLk.getLocInfo(currLoc));
         }
     }
 
@@ -88,16 +90,6 @@ public class STAGProcessCommand {
         returnText = text;
     }
 
-    //Method to set index to walk through commands
-    public void setIndex(int i) {
-        index = i;
-    }
-
-    //Method to return index value
-    public int getIndex() {
-        return index;
-    }
-
     //Method to perform death actions
     public void playerDeath(PlayerData currPlayer, LocationData currLoc){
 
@@ -109,12 +101,37 @@ public class STAGProcessCommand {
 
     }
 
-    //Method to move all inventory items into current location
+    //Method to move all player inventory items into current location
     public void addInvToLoc(PlayerData currPlayer, LocationData currLoc){
         int i;
 
-        for(i=0; i < currPlayer.getPlayerInv().size(); i++){
-            currLoc.addArtefact(currPlayer.getPlayerInv().get(i).get(0), currPlayer.getPlayerInv().get(i).get(1));
+        for(i=0; i < currPlayer.getPlayerInv(false).size(); i++){
+            currLoc.addArtefact(currPlayer.getPlayerInv(false).get(i), currPlayer.getPlayerInv(true).get(i));
         }
+    }
+
+    //Find instance of word within tokens
+    public boolean checkExpectedCommand(String[] commands, String command){
+
+        for(String s: commands){
+
+            if(s.equalsIgnoreCase(command)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //See if instance of word within tokens matches object in list
+    public String commandIsObject(String[] commands, ArrayList<String> list){
+
+        for(String s: commands){
+            for(String l: list){
+                if(s.equalsIgnoreCase(l)){
+                    return l;
+                }
+            }
+        }
+        return "NA";
     }
 }

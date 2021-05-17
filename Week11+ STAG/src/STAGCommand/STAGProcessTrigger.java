@@ -2,13 +2,10 @@ package STAGCommand;
 import STAGData.ActionsTriggerData;
 import STAGData.LocationData;
 import STAGData.PlayerData;
-
-import javax.xml.stream.Location;
 import java.util.ArrayList;
 
 public class STAGProcessTrigger extends STAGProcessCommand {
 
-    public ActionsTriggerData currTrigger;
     public LocationData producedLoc;
     public String type;
     public STAGProcessTrigger(){
@@ -19,24 +16,24 @@ public class STAGProcessTrigger extends STAGProcessCommand {
                                PlayerData currPlayer, ArrayList<ActionsTriggerData> triggers,
                                ArrayList<LocationData> locations){
 
-        if(setCurrentTriggerIfExists(commands[getIndex()], triggers)){
+        ActionsTriggerData currTrigger = commandIsTrigger(commands, triggers);
 
-            //TODO: Could be any word in the sentence, need to rethink incrementing
-            //Increment
-            setIndex(getIndex() + 1);
+        if(currTrigger != null){
+
+            String subjectName = commandIsObject(commands, currTrigger.getSubjects());
 
             //Check the next command matches the trigger subject
-            if(doesCommandMatchSubject(commands[getIndex()], getCurrTrigger().getSubjects())){
+            if(!subjectName.equals("NA")){
 
                 //Check subjects for trigger match current inventory/furniture in current location
-                if(allSubjectsHere(getCurrTrigger().getSubjects(), currLoc, currPlayer)){
+                if(allSubjectsHere(currTrigger.getSubjects(), currLoc, currPlayer)){
 
                     //Create the produced object
-                    createProduced(getCurrTrigger().getProduced(), currLoc, currPlayer, locations);
-                    setReturnString(getCurrTrigger().getNarr());
+                    createProduced(currTrigger.getProduced(), currLoc, currPlayer, locations);
+                    setReturnString(currTrigger.getNarr());
 
                     //Remove the consumed items
-                    removeConsumed(getCurrTrigger().getConsumed(), currLoc, currPlayer);
+                    removeConsumed(currTrigger.getConsumed(), currLoc, currPlayer);
                 }
                 else{
                     setReturnString("Missing required items or object is not in this location");
@@ -51,40 +48,6 @@ public class STAGProcessTrigger extends STAGProcessCommand {
         }
     }
 
-    //Check if trigger exists
-    public boolean setCurrentTriggerIfExists(String command, ArrayList<ActionsTriggerData> triggers){
-        //int i;
-
-        for (ActionsTriggerData a: triggers) {
-            if(a.getTrig().equalsIgnoreCase(command)){
-                setCurrentTrigger(a);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    //Set the current trigger
-    public void setCurrentTrigger(ActionsTriggerData trigger){
-        currTrigger = trigger;
-    }
-
-    //Get current trigger
-    public ActionsTriggerData getCurrTrigger(){
-        return currTrigger;
-    }
-
-    //Check if subject exists
-    public boolean doesCommandMatchSubject(String command, ArrayList<String> subjects){
-
-        for (String s: subjects) {
-            if(s.equals(command)){
-                return true;
-            }
-        }
-        return false;
-    }
-
     //TODO: Just had a thought what if there are multiple subjects i.e. two trees
     //TODO: Just had a thought what if you pick up something that you already have?
     //Check all subjects are available in current location
@@ -92,13 +55,13 @@ public class STAGProcessTrigger extends STAGProcessCommand {
         int subjectCount = 0;
 
         for (String s: subjects) {
-            if (checkStringIn2DArrayList(s, currLoc.getFurnitureList())) {
+            if (checkStringInList(s, currLoc.getFurnitureList(false))) {
                 subjectCount++;
             }
-            if (checkStringIn2DArrayList(s, currLoc.getCharList())) {
+            if (checkStringInList(s, currLoc.getCharList(false))) {
                 subjectCount++;
             }
-            if (checkStringIn2DArrayList(s, currPlayer.getPlayerInv())) {
+            if (checkStringInList(s, currPlayer.getPlayerInv(false))) {
                 subjectCount++;
             }
         }
@@ -109,23 +72,25 @@ public class STAGProcessTrigger extends STAGProcessCommand {
         return false;
     }
 
-    //Check if string exists in 2D arraylist of strings
-    public boolean checkStringIn2DArrayList(String stringToFind, ArrayList<ArrayList<String>> stringList){
+    //Check if string exists in List
+    public boolean checkStringInList(String stringToFind, ArrayList<String> stringList) {
 
-        for(ArrayList<String> row: stringList){
-            if(row.get(0).equalsIgnoreCase(stringToFind)){
-                return true;
+        for (String s : stringList) {
+            if (s.equalsIgnoreCase(stringToFind)) {
+                if (s.equalsIgnoreCase(stringToFind)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     //Get index if string exists in 2D arraylist of strings
-    public int getIndexofStringin2DArrayList(String stringToFind, ArrayList<ArrayList<String>> stringList){
+    public int getIndexofStringinList(String stringToFind, ArrayList<String> stringList){
         int i;
 
         for(i = 0; i< stringList.size(); i++){
-            if(stringList.get(i).get(0).equalsIgnoreCase(stringToFind)){
+            if(stringList.get(i).equalsIgnoreCase(stringToFind)){
                 return i;
             }
         }
@@ -139,17 +104,17 @@ public class STAGProcessTrigger extends STAGProcessCommand {
             if(c.equalsIgnoreCase("Health")){
                 currPlayer.reduceHealth();
             }
-            else if (checkStringIn2DArrayList(c, currLoc.getFurnitureList())) {
+            else if (checkStringInList(c, currLoc.getFurnitureList(false))) {
                 //Remove from current location furniture if matched
-                currLoc.getFurnitureList().remove(getIndexofStringin2DArrayList(c, currLoc.getFurnitureList()));
+                currLoc.removeFurniture(getIndexofStringinList(c, currLoc.getFurnitureList(false)));
             }
-            else if (checkStringIn2DArrayList(c, currLoc.getCharList())) {
+            else if (checkStringInList(c, currLoc.getCharList(false))) {
                 //Remove from current location furniture if matched
-                currLoc.getCharList().remove(getIndexofStringin2DArrayList(c, currLoc.getCharList()));
+                currLoc.removeCharacter(getIndexofStringinList(c, currLoc.getCharList(false)));
             }
-            else if (checkStringIn2DArrayList(c, currPlayer.getPlayerInv())) {
+            else if (checkStringInList(c, currPlayer.getPlayerInv(false))) {
                 //Remove from current player inventory if matched
-                currPlayer.getPlayerInv().remove(getIndexofStringin2DArrayList(c, currPlayer.getPlayerInv()));
+                currPlayer.removeInv(getIndexofStringinList(c, currPlayer.getPlayerInv(false)));
             }
         }
     }
@@ -183,22 +148,22 @@ public class STAGProcessTrigger extends STAGProcessCommand {
             currLoc.addPath(produced);
         }
         else if(getType().equals("A")){
-            i = getIndexofStringin2DArrayList(produced, getProducedLoc().getArtefactList());
+            i = getIndexofStringinList(produced, getProducedLoc().getArtefactList(false));
 
             //Use index to place object into player inventory and description;
-            currPlayer.addPlayerInv(getProducedLoc().getArtefactList().get(i).get(0),
-                    getProducedLoc().getArtefactList().get(i).get(1));
+            currPlayer.addPlayerInv(getProducedLoc().getArtefactList(false).get(i),
+                    getProducedLoc().getArtefactList(true).get(i));
 
             //Remove furniture from unplaced
             getProducedLoc().removeArtefact(i);
         }
         else if(getType().equals("F")){
             //Get index of unplaced item
-            i = getIndexofStringin2DArrayList(produced, getProducedLoc().getFurnitureList());
+            i = getIndexofStringinList(produced, getProducedLoc().getFurnitureList(false));
 
             //Use index to place furniture into current location;
-            currLoc.addFurniture(getProducedLoc().getFurnitureList().get(i).get(0),
-                    getProducedLoc().getFurnitureList().get(i).get(1));
+            currLoc.addFurniture(getProducedLoc().getFurnitureList(false).get(i),
+                    getProducedLoc().getFurnitureList(false).get(i));
 
             //Remove furniture from unplaced
             getProducedLoc().removeFurniture(i);
@@ -206,11 +171,11 @@ public class STAGProcessTrigger extends STAGProcessCommand {
         else if(getType().equals("C")){
 
             //Get index of unplaced item
-            i = getIndexofStringin2DArrayList(produced, getProducedLoc().getCharList());
+            i = getIndexofStringinList(produced, getProducedLoc().getCharList(false));
 
             //Use index to place character into current location;
-            currLoc.addCharacter(getProducedLoc().getCharList().get(i).get(0),
-                    getProducedLoc().getCharList().get(i).get(1));
+            currLoc.addCharacter(getProducedLoc().getCharList(false).get(i),
+                    getProducedLoc().getCharList(false).get(i));
 
             //Remove furniture from unplaced
             getProducedLoc().removeCharacter(i);
@@ -241,24 +206,37 @@ public class STAGProcessTrigger extends STAGProcessCommand {
                 setType("L");
                 setProducedLoc(l);
             }
-            for(ArrayList<String> s: l.getFurnitureList()){
-                if(s.get(0).equals(produced)){
+            for(String s: l.getFurnitureList(false)){
+                if(s.equals(produced)){
                     setType("F");
                     setProducedLoc(l);
                 }
             }
-            for(ArrayList<String> s: l.getArtefactList()){
-                if(s.get(0).equals(produced)){
+            for(String s: l.getArtefactList(false)){
+                if(s.equals(produced)){
                     setType("A");
                     setProducedLoc(l);
                 }
             }
-            for(ArrayList<String> s: l.getCharList()){
-                if(s.get(0).equals(produced)){
+            for(String s: l.getCharList(false)){
+                if(s.equals(produced)){
                     setType("C");
                     setProducedLoc(l);
                 }
             }
         }
+    }
+
+    //See if instance of word within tokens matches object in list
+    public ActionsTriggerData commandIsTrigger(String[] commands, ArrayList<ActionsTriggerData> triggers){
+
+        for(String s: commands){
+            for(ActionsTriggerData t: triggers){
+                if(s.equalsIgnoreCase(t.getTrig())){
+                    return t;
+                }
+            }
+        }
+        return null;
     }
 }

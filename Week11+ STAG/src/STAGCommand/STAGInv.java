@@ -18,8 +18,8 @@ public class STAGInv extends STAGProcessCommand {
 
         sb.append("Inventory: ");
 
-        for (i = 0; i < currPlayer.getPlayerInv().size(); i++) {
-            sb.append(currPlayer.getPlayerInv().get(i).get(0));
+        for (i = 0; i < currPlayer.getPlayerInv(false).size(); i++) {
+            sb.append(currPlayer.getPlayerInv(false).get(i));
             sb.append(" ");
         }
         if(i == 0){

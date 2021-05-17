@@ -5,38 +5,23 @@ import java.util.ArrayList;
 
 public class STAGGoTo extends STAGLook {
 
-    public boolean exists;
-
     public STAGGoTo(){
     }
 
     //Method to alter location
     public void alterLoc(String[] commands, PlayerData currPlayer, LocationData currLoc, ArrayList<LocationData> locations){
 
-        //Increment index
-        setIndex(getIndex() + 1);
+        //Check command line for location path
+        String getPath = commandIsObject(commands, currLoc.getPaths());
 
-        exists = pathExist(commands[getIndex()], currLoc.getPaths());
-        if(exists){
+        if(!getPath.equals("NA")){
             //Update player location
-            currPlayer.setPlayerLocIndex(getNewLocIndex(commands[getIndex()], locations));
+            currPlayer.setPlayerLocIndex(getNewLocIndex(getPath, locations));
             setReturnString(getLocInfo(locations.get(currPlayer.getPlayerLocIndex())));
         }
         else{
             setReturnString("Path doesn't exist");
         }
-    }
-
-    //Check path exists in location
-    public boolean pathExist(String commandLoc, ArrayList<String> paths){
-        int i;
-
-        for(i = 0; i < paths.size(); i++){
-            if(paths.get(i).equals(commandLoc)){
-                return true;
-            }
-        }
-        return false;
     }
 
     //Get new index of location based on comparison with string

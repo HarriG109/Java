@@ -1,7 +1,5 @@
 import STAGCommand.STAGProcessCommand;
 import STAGData.*;
-import STAGExceptions.IndexDoesntExistException;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -12,7 +10,7 @@ class StagServer
     public static ArrayList<ActionsTriggerData> triggers = new ArrayList<ActionsTriggerData>();
     public static ArrayList<PlayerData> players = new ArrayList<PlayerData>();
 
-    public static void main(String args[]) throws IndexDoesntExistException
+    public static void main(String args[])
     {
         if(args.length != 2) System.out.println("Usage: java StagServer <entity-file> <action-file>");
         else new StagServer(args[0], args[1], 8888);

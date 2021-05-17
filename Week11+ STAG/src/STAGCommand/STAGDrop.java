@@ -5,8 +5,6 @@ import STAGData.PlayerData;
 
 public class STAGDrop extends STAGProcessCommand {
 
-    boolean itemExists;
-
     public STAGDrop(){
     }
 
@@ -14,11 +12,12 @@ public class STAGDrop extends STAGProcessCommand {
     //TODO: Need to evaluate if any object could be two words
     public void dropItemIfExists(String[] commands, PlayerData currPlayer, LocationData currLoc){
 
-        setIndex(getIndex() + 1);
+        //Get object name
+        String droppedItem = commandIsObject(commands, currPlayer.getPlayerInv(false));
 
-        itemExists = checkArtefactInInv(commands[getIndex()], currLoc, currPlayer);
-        if(itemExists){
-            setReturnString("You dropped a " + commands[getIndex()]);
+        checkArtefactInInv(droppedItem, currLoc, currPlayer);
+        if(!droppedItem.equals("NA")){
+            setReturnString("You dropped a " + droppedItem);
         }
         else{
             setReturnString("Item doesn't exist in inventory");
@@ -27,20 +26,18 @@ public class STAGDrop extends STAGProcessCommand {
 
     //Check artefact is in location and remove it if it is
     //Note: Need to get descriptions and also the inventory should present descriptions maybe?
-    public boolean checkArtefactInInv(String commandLoc, LocationData currLoc, PlayerData currPlayer){
+    public void checkArtefactInInv(String commandLoc, LocationData currLoc, PlayerData currPlayer){
         int i;
 
-        for(i = 0; i < currPlayer.getPlayerInv().size(); i++){
-            if(currPlayer.getPlayerInv().get(i).get(0).equalsIgnoreCase(commandLoc)){
+        for(i = 0; i < currPlayer.getPlayerInv(false).size(); i++){
+            if(currPlayer.getPlayerInv(false).get(i).equalsIgnoreCase(commandLoc)){
                 //Add item to location
-                currLoc.addArtefact(currPlayer.getPlayerInv().get(i).get(0), currPlayer.getPlayerInv().get(i).get(1));
+                currLoc.addArtefact(currPlayer.getPlayerInv(false).get(i),
+                        currPlayer.getPlayerInv(true).get(i));
 
                 //Remove from player inventory
                 currPlayer.removeInv(i);
-
-                return true;
             }
         }
-        return false;
     }
 }

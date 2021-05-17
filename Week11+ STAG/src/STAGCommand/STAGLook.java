@@ -31,8 +31,8 @@ public class STAGLook extends STAGProcessCommand {
 
         sb.append("Characters: ");
 
-        for (i = 0; i < locD.getCharList().size(); i++) {
-            sb.append(locD.getCharList().get(i).get(0));
+        for (i = 0; i < locD.getCharList(false).size(); i++) {
+            sb.append(locD.getCharList(false).get(i));
             sb.append(" ");
         }
 
@@ -48,8 +48,8 @@ public class STAGLook extends STAGProcessCommand {
 
         sb.append("Artefacts: ");
 
-        for (i = 0; i < locD.getArtefactList().size(); i++) {
-            sb.append(locD.getArtefactList().get(i).get(0));
+        for (i = 0; i < locD.getArtefactList(false).size(); i++) {
+            sb.append(locD.getArtefactList(false).get(i));
             sb.append(" ");
         }
 
@@ -65,8 +65,8 @@ public class STAGLook extends STAGProcessCommand {
 
         sb.append("Furniture: ");
 
-        for (i = 0; i < locD.getFurnitureList().size(); i++) {
-            sb.append(locD.getFurnitureList().get(i).get(0));
+        for (i = 0; i < locD.getFurnitureList(false).size(); i++) {
+            sb.append(locD.getFurnitureList(false).get(i));
             sb.append(" ");
         }
 

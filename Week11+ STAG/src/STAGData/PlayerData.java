@@ -1,5 +1,4 @@
 package STAGData;
-
 import java.util.ArrayList;
 
 public class PlayerData {
@@ -19,6 +18,10 @@ public class PlayerData {
         setPlayerLocIndex(0);
         //Starting Health will be 3
         playerHealth = 3;
+
+        //Add two lists to the player inventory one for objects and one for descriptions
+        playerInv.add(new ArrayList<String>());
+        playerInv.add(new ArrayList<String>());
     }
 
     //Method to get player name
@@ -38,19 +41,22 @@ public class PlayerData {
 
     //Method to add to player inventory arraylist
     public void addPlayerInv(String artefact, String desc){
-        playerInv.add(new ArrayList<String>());
-        playerInv.get(playerInv.size() - 1).add(artefact);
-        playerInv.get(playerInv.size() - 1).add(desc);
+        playerInv.get(0).add(artefact);
+        playerInv.get(1).add(desc);
     }
 
     //Method to get player inventory arraylist
-    public ArrayList<ArrayList<String>> getPlayerInv(){
-        return playerInv;
+    public ArrayList<String> getPlayerInv(boolean desc){
+        if(desc) {
+            return playerInv.get(1);
+        }
+        return playerInv.get(0);
     }
 
     //Method to remove artefact from inventory at specific index
     public void removeInv(int artIndex){
-        playerInv.remove(artIndex);
+        playerInv.get(0).remove(artIndex);
+        playerInv.get(1).remove(artIndex);
     }
 
     //Method to wipe entire inventory (For death)

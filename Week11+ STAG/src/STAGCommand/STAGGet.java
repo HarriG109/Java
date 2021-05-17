@@ -4,8 +4,6 @@ import STAGData.PlayerData;
 
 public class STAGGet extends STAGProcessCommand {
 
-    boolean itemExists;
-
     public STAGGet(){
     }
 
@@ -14,12 +12,12 @@ public class STAGGet extends STAGProcessCommand {
     //Handling two words could be problematic.
     public void collectItemIfExists(String[] commands, PlayerData currPlayer, LocationData currLoc){
 
-        //Increment commands
-        setIndex(getIndex() + 1);
+        //Check command line for location artefact
+        String getItem = commandIsObject(commands, currLoc.getArtefactList(false));
 
-        itemExists = checkArtefactInLocation(commands[getIndex()], currLoc, currPlayer);
-        if(itemExists){
-            setReturnString("You picked up an " + commands[getIndex()]);
+        checkArtefactInLocation(getItem, currLoc, currPlayer);
+        if(!getItem.equals("NA")){
+            setReturnString("You picked up an " + getItem);
         }
         else{
             setReturnString("Item doesn't exist in room");
@@ -28,20 +26,19 @@ public class STAGGet extends STAGProcessCommand {
 
     //Check artefact is in location and remove it if it is
     //Note: Need to get descriptions and also the inventory should present descriptions maybe?
-    public boolean checkArtefactInLocation(String commandLoc, LocationData currLoc, PlayerData currPlayer){
+    public void checkArtefactInLocation(String commandLoc, LocationData currLoc, PlayerData currPlayer){
         int i;
 
-        for(i = 0; i < currLoc.getArtefactList().size(); i++){
-            if(currLoc.getArtefactList().get(i).get(0).equalsIgnoreCase(commandLoc)){
+        for(i = 0; i < currLoc.getArtefactList(false).size(); i++){
+            if(currLoc.getArtefactList(false).get(i).equalsIgnoreCase(commandLoc)){
 
                 //Add item to player inventory
-                currPlayer.addPlayerInv(currLoc.getArtefactList().get(i).get(0), currLoc.getArtefactList().get(i).get(1));
+                currPlayer.addPlayerInv(currLoc.getArtefactList(false).get(i),
+                        currLoc.getArtefactList(true).get(i));
 
                 //Remove item from location
                 currLoc.removeArtefact(i);
-                return true;
             }
         }
-        return false;
     }
 }

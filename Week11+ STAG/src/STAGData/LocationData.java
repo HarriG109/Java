@@ -13,27 +13,32 @@ public class LocationData {
     public LocationData(String locName, String desc){
         location.add(locName);
         location.add(desc);
+
+        //Add two lists to each characters/artefact/furniture for the object and their descriptions
+        characterList.add(new ArrayList<String>());
+        characterList.add(new ArrayList<String>());
+        artefactList.add(new ArrayList<String>());
+        artefactList.add(new ArrayList<String>());
+        furnitureList.add(new ArrayList<String>());
+        furnitureList.add(new ArrayList<String>());
     }
 
     //Method to add characters to list
     public void addCharacter(String character, String desc){
-        characterList.add(new ArrayList<String>());
-        characterList.get(characterList.size() - 1).add(character);
-        characterList.get(characterList.size() - 1).add(desc);
+        characterList.get(0).add(character);
+        characterList.get(1).add(desc);
     }
 
     //Method to add artefacts to list
     public void addArtefact(String artefact, String desc){
-        artefactList.add(new ArrayList<String>());
-        artefactList.get(artefactList.size() - 1).add(artefact);
-        artefactList.get(artefactList.size() - 1).add(desc);
+        artefactList.get(0).add(artefact);
+        artefactList.get(1).add(desc);
     }
 
     //Method to add furniture to list
     public void addFurniture(String furniture, String desc){
-        furnitureList.add(new ArrayList<String>());
-        furnitureList.get(furnitureList.size() - 1).add(furniture);
-        furnitureList.get(furnitureList.size() - 1).add(desc);
+        furnitureList.get(0).add(furniture);
+        furnitureList.get(1).add(desc);
     }
 
     //Method to add paths to list
@@ -52,37 +57,49 @@ public class LocationData {
     }
 
     //Method to get character list
-    public ArrayList<ArrayList<String>> getCharList(){
-        return characterList;
+    public ArrayList<String> getCharList(boolean desc){
+        if(desc) {
+            return characterList.get(1);
+        }
+        return characterList.get(0);
     }
 
     //Method to get artefact list
-    public ArrayList<ArrayList<String>> getArtefactList(){
-        return artefactList;
-    }
-
-    //Method to remove artefact at specific index
-    public void removeArtefact(int artIndex){
-        artefactList.remove(artIndex);
-    }
-
-    //Method to remove artefact at specific index
-    public void removeCharacter(int charIndex){
-        characterList.remove(charIndex);
-    }
-
-    //Method to remove artefact at specific index
-    public void removeFurniture(int furnIndex){
-        furnitureList.remove(furnIndex);
+    public ArrayList<String> getArtefactList(boolean desc){
+        if(desc) {
+            return artefactList.get(1);
+        }
+        return artefactList.get(0);
     }
 
     //Method to get furniture list
-    public ArrayList<ArrayList<String>> getFurnitureList(){
-        return furnitureList;
+    public ArrayList<String> getFurnitureList(boolean desc){
+        if(desc) {
+            return furnitureList.get(1);
+        }
+        return furnitureList.get(0);
     }
 
     //Method to get path list
     public ArrayList<String> getPaths(){
-            return pathList;
+        return pathList;
+    }
+
+    //Method to remove artefact at specific index
+    public void removeArtefact(int artIndex){
+        artefactList.get(0).remove(artIndex);
+        artefactList.get(1).remove(artIndex);
+    }
+
+    //Method to remove artefact at specific index
+    public void removeCharacter(int charIndex){
+        characterList.get(0).remove(charIndex);
+        characterList.get(1).remove(charIndex);
+    }
+
+    //Method to remove artefact at specific index
+    public void removeFurniture(int furnIndex){
+        furnitureList.get(0).remove(furnIndex);
+        furnitureList.get(1).remove(furnIndex);
     }
 }

@@ -63,8 +63,9 @@ public class PlayerData {
     public void wipeInv(){
         int i;
 
-        for(i=0; i< playerInv.size(); i++){
-            playerInv.remove(i);
+        for(i=0; i < playerInv.get(0).size(); i++){
+            playerInv.get(0).remove(i);
+            playerInv.get(1).remove(i);
         }
     }
 

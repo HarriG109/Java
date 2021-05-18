@@ -97,7 +97,7 @@ public class STAGProcessCommand {
         currPlayer.setHealth(3);
         currPlayer.setPlayerLocIndex(0);
         currPlayer.wipeInv();
-        setReturnString(returnString() + "\nYou ran out of health and have died!\n");
+        setReturnString(returnString() + "\nYou have died! All your items fall to the floor!\n");
 
     }
 

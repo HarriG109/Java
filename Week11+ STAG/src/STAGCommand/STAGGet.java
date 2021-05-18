@@ -17,7 +17,7 @@ public class STAGGet extends STAGProcessCommand {
 
         checkArtefactInLocation(getItem, currLoc, currPlayer);
         if(!getItem.equals("NA")){
-            setReturnString("You picked up " + getItem);
+            setReturnString("You picked up" + getItem);
         }
         else{
             setReturnString("Item doesn't exist in room");

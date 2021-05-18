@@ -1,5 +1,7 @@
 package STAGCommand;
 import STAGData.LocationData;
+import STAGData.PlayerData;
+import java.util.ArrayList;
 
 public class STAGLook extends STAGProcessCommand {
 
@@ -7,12 +9,12 @@ public class STAGLook extends STAGProcessCommand {
     }
 
     //Method to return string of location data
-    public String getLocInfo(LocationData locD){
+    public String getLocInfo(LocationData locD, ArrayList<PlayerData> players, ArrayList<LocationData> location){
 
-        //With brackets and commas
         StringBuilder sb = new StringBuilder();
 
         sb.append("Location Description: " + locD.getLocDesc() + "\n");
+        sb.append(currLocPlayersAsString(locD, players, location) + "\n");
         sb.append(currLocCharsAsString(locD) + "\n");
         sb.append(currLocArtAsString(locD) + "\n");
         sb.append(currLocFurnAsString(locD) + "\n");
@@ -25,7 +27,6 @@ public class STAGLook extends STAGProcessCommand {
     //Method to return string of characters in current location
     public String currLocCharsAsString(LocationData locD){
 
-        //With brackets and commas
         int i;
         StringBuilder sb = new StringBuilder();
 
@@ -42,7 +43,6 @@ public class STAGLook extends STAGProcessCommand {
     //Method to return string of artefacts in current location
     public String currLocArtAsString(LocationData locD){
 
-        //With brackets and commas
         int i;
         StringBuilder sb = new StringBuilder();
 
@@ -59,7 +59,6 @@ public class STAGLook extends STAGProcessCommand {
     //Method to return string of furniture in current location
     public String currLocFurnAsString(LocationData locD){
 
-        //With brackets and commas
         int i;
         StringBuilder sb = new StringBuilder();
 
@@ -76,7 +75,6 @@ public class STAGLook extends STAGProcessCommand {
     //Method to return string of paths in current location
     public String currLocPathAsString(LocationData locD){
 
-        //With brackets and commas
         int i;
         StringBuilder sb = new StringBuilder();
 
@@ -85,6 +83,25 @@ public class STAGLook extends STAGProcessCommand {
         for (i = 0; i < locD.getPaths().size(); i++) {
             sb.append(locD.getPaths().get(i));
             sb.append(" ");
+        }
+
+        return sb.toString();
+    }
+
+    //Method to see other player
+    public String currLocPlayersAsString(LocationData locD, ArrayList<PlayerData> players
+            , ArrayList<LocationData> locations){
+
+        int i;
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Players: ");
+
+        for (i = 0; i < players.size(); i++) {
+            if(locations.get(players.get(i).getPlayerLocIndex()).getLoc().equals(locD.getLoc())) {
+                sb.append(players.get(i).getPlayer());
+                sb.append(" ");
+            }
         }
 
         return sb.toString();

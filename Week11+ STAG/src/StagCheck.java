@@ -6,25 +6,43 @@ public class StagCheck
 {
     public static void main(String args[])
     {
-        String playerName = "Steve";
+        String playerName1 = "Steve";
+        String playerName2 = "Dave";
         String response;
         Process server = startNewServer();
 
         System.out.print("look...");
-        response = executeCommand(playerName + ": look");
+        response = executeCommand(playerName1 + ": look");
         if(response.contains("cabin")) System.out.println("SUCCESS");
         else System.out.println("FAIL");
 
         System.out.print("get....");
-        executeCommand(playerName + ": get axe");
-        response = executeCommand(playerName + ": inv");
+        executeCommand(playerName1 + ": get axe");
+        response = executeCommand(playerName1 + ": inv");
         if(response.contains("axe")) System.out.println("SUCCESS");
         else System.out.println("FAIL");
 
         System.out.print("goto...");
-        response = executeCommand(playerName + ": goto forest");
+        response = executeCommand(playerName1 + ": goto forest");
         if(response.contains("tree")) System.out.println("SUCCESS");
         else System.out.println("FAIL");
+
+        System.out.print("look...");
+        response = executeCommand(playerName2 + ": look");
+        if(response.contains("cabin")) System.out.println("SUCCESS");
+        else System.out.println("FAIL");
+
+        System.out.print("get....");
+        executeCommand(playerName2 + ": get coin");
+        response = executeCommand(playerName2 + ": inv");
+        if(response.contains("coin")) System.out.println("SUCCESS");
+        else System.out.println("FAIL");
+
+        System.out.print("goto...");
+        response = executeCommand(playerName2 + ": goto forest");
+        if(response.contains("tree")) System.out.println("SUCCESS");
+        else System.out.println("FAIL");
+
 
         killOldServer(server);
     }

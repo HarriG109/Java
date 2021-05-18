@@ -65,7 +65,7 @@ class StagServer
         //Instantiate object which captures the current player/location
         STAGProcessCommand pCommand = new STAGProcessCommand(players.get(newCommand.getCurrentPlayerIndex()), locations);
         //Process the command
-        pCommand.processCommand(newCommand.getTokenArray(), locations, triggers);
+        pCommand.processCommand(newCommand.getTokenArray(), locations, triggers, players);
 
         //Print return text
         if(pCommand.returnString() != null) {

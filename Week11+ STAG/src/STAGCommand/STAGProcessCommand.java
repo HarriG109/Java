@@ -22,7 +22,7 @@ public class STAGProcessCommand {
     }
 
     public void processCommand(String[] commands, ArrayList<LocationData> location,
-                               ArrayList<ActionsTriggerData> triggers){
+                               ArrayList<ActionsTriggerData> triggers, ArrayList<PlayerData> players){
 
         //Check first command
         if(checkExpectedCommand(commands, "inv") ||
@@ -49,14 +49,14 @@ public class STAGProcessCommand {
             //Create new instance of goto
             STAGGoTo stgGo = new STAGGoTo();
             //Change the location
-            stgGo.alterLoc(commands, currPlayer, currLoc, location);
+            stgGo.alterLoc(commands, currPlayer, currLoc, location, players);
         }
         else if(checkExpectedCommand(commands, "look")) {
 
             //Create new instance of look
             STAGLook stgLk = new STAGLook();
             //Create look string and set as return string
-            setReturnString(stgLk.getLocInfo(currLoc));
+            setReturnString(stgLk.getLocInfo(currLoc, players, location));
         }
         else if(checkExpectedCommand(commands, "health")) {
 
@@ -76,7 +76,7 @@ public class STAGProcessCommand {
             //Create new instance of look
             STAGLook stgLk = new STAGLook();
             //Create look string and set as return string
-            setReturnString(stgLk.getLocInfo(currLoc));
+            setReturnString(stgLk.getLocInfo(currLoc, players, location));
         }
     }
 

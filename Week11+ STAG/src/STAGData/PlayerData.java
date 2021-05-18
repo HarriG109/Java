@@ -29,12 +29,12 @@ public class PlayerData {
         return player;
     }
 
-    //Method to set location name
+    //Method to set location index
     public void setPlayerLocIndex(int loc){
         playerLocationIndex = loc;
     }
 
-    //Method to get location name
+    //Method to get location index
     public int getPlayerLocIndex(){
         return playerLocationIndex;
     }

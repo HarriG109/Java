@@ -9,7 +9,8 @@ public class STAGGoTo extends STAGLook {
     }
 
     //Method to alter location
-    public void alterLoc(String[] commands, PlayerData currPlayer, LocationData currLoc, ArrayList<LocationData> locations){
+    public void alterLoc(String[] commands, PlayerData currPlayer, LocationData currLoc,
+                         ArrayList<LocationData> locations, ArrayList<PlayerData> players){
 
         //Check command line for location path
         String getPath = commandIsObject(commands, currLoc.getPaths());
@@ -17,7 +18,7 @@ public class STAGGoTo extends STAGLook {
         if(!getPath.equals("NA")){
             //Update player location
             currPlayer.setPlayerLocIndex(getNewLocIndex(getPath, locations));
-            setReturnString(getLocInfo(locations.get(currPlayer.getPlayerLocIndex())));
+            setReturnString(getLocInfo(locations.get(currPlayer.getPlayerLocIndex()), players, locations));
         }
         else{
             setReturnString("Path doesn't exist");

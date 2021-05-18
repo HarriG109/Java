@@ -55,7 +55,6 @@ class StagServer
     {
         //Create incoming commands as string
         String line = in.readLine();
-        out.write("You said... " + line + "\n");
 
         //Instantiate object which breaks the incoming command into tokens and get current player
         STAGHandleIncomingCommand newCommand = new STAGHandleIncomingCommand(line);

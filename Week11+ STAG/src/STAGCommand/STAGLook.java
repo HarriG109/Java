@@ -9,16 +9,17 @@ public class STAGLook extends STAGProcessCommand {
     }
 
     //Method to return string of location data
-    public String getLocInfo(LocationData locD, ArrayList<PlayerData> players, ArrayList<LocationData> location){
+    public String getLocInfo(LocationData locD, PlayerData currPlayer,
+                             ArrayList<PlayerData> players, ArrayList<LocationData> location){
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Location Description: " + locD.getLocDesc() + "\n");
-        sb.append(currLocPlayersAsString(locD, players, location) + "\n");
-        sb.append(currLocCharsAsString(locD) + "\n");
-        sb.append(currLocArtAsString(locD) + "\n");
-        sb.append(currLocFurnAsString(locD) + "\n");
-        sb.append(currLocPathAsString(locD) + "\n");
+        sb.append("You are in " + locD.getLocDesc() + ". You can see: \n");
+        sb.append(currLocPlayersAsString(locD, currPlayer, players, location));
+        sb.append(currLocCharsAsString(locD));
+        sb.append(currLocArtAsString(locD));
+        sb.append(currLocFurnAsString(locD));
+        sb.append(currLocPathAsString(locD));
 
         return sb.toString();
     }
@@ -30,11 +31,9 @@ public class STAGLook extends STAGProcessCommand {
         int i;
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Characters: ");
-
         for (i = 0; i < locD.getCharList(false).size(); i++) {
-            sb.append(locD.getCharList(false).get(i));
-            sb.append(" ");
+            sb.append(locD.getCharList(true).get(i));
+            sb.append("\n");
         }
 
         return sb.toString();
@@ -46,11 +45,9 @@ public class STAGLook extends STAGProcessCommand {
         int i;
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Artefacts: ");
-
         for (i = 0; i < locD.getArtefactList(false).size(); i++) {
-            sb.append(locD.getArtefactList(false).get(i));
-            sb.append(" ");
+            sb.append(locD.getArtefactList(true).get(i));
+            sb.append("\n");
         }
 
         return sb.toString();
@@ -62,11 +59,9 @@ public class STAGLook extends STAGProcessCommand {
         int i;
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Furniture: ");
-
         for (i = 0; i < locD.getFurnitureList(false).size(); i++) {
-            sb.append(locD.getFurnitureList(false).get(i));
-            sb.append(" ");
+            sb.append(locD.getFurnitureList(true).get(i));
+            sb.append("\n");
         }
 
         return sb.toString();
@@ -78,29 +73,29 @@ public class STAGLook extends STAGProcessCommand {
         int i;
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Paths: ");
-
         for (i = 0; i < locD.getPaths().size(); i++) {
-            sb.append(locD.getPaths().get(i));
-            sb.append(" ");
+            if(i == 0){
+                sb.append("You can access from here:\n");
+            }
+            sb.append("A " + locD.getPaths().get(i));
+            sb.append("\n");
         }
 
         return sb.toString();
     }
 
     //Method to see other player
-    public String currLocPlayersAsString(LocationData locD, ArrayList<PlayerData> players
-            , ArrayList<LocationData> locations){
+    public String currLocPlayersAsString(LocationData locD, PlayerData currPlayer,
+                                         ArrayList<PlayerData> players, ArrayList<LocationData> locations){
 
         int i;
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Players: ");
-
         for (i = 0; i < players.size(); i++) {
-            if(locations.get(players.get(i).getPlayerLocIndex()).getLoc().equals(locD.getLoc())) {
-                sb.append(players.get(i).getPlayer());
-                sb.append(" ");
+            if(locations.get(players.get(i).getPlayerLocIndex()).getLoc().equals(locD.getLoc()) &&
+               !currPlayer.getPlayer().equals(players.get(i).getPlayer())) {
+                sb.append("Another player called " + players.get(i).getPlayer());
+                sb.append("\n");
             }
         }
 

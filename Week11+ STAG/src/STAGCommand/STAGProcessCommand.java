@@ -56,7 +56,7 @@ public class STAGProcessCommand {
             //Create new instance of look
             STAGLook stgLk = new STAGLook();
             //Create look string and set as return string
-            setReturnString(stgLk.getLocInfo(currLoc, players, location));
+            setReturnString(stgLk.getLocInfo(currLoc, currPlayer, players, location));
         }
         else if(checkExpectedCommand(commands, "health")) {
 
@@ -76,7 +76,7 @@ public class STAGProcessCommand {
             //Create new instance of look
             STAGLook stgLk = new STAGLook();
             //Create look string and set as return string
-            setReturnString(stgLk.getLocInfo(currLoc, players, location));
+            setReturnString(stgLk.getLocInfo(currLoc, currPlayer, players, location));
         }
     }
 

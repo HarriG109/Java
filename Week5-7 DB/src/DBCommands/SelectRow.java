@@ -15,7 +15,7 @@ public class SelectRow extends DBcmd {
     public SelectRow(String filePath, String[] commandArray)
             throws FileMissingException, ColumnDoesntExistException, ConversionException {
 
-        int whereIndex, i;
+        int whereIndex;
 
         readInFile(filePath, returnName(commandArray));
 

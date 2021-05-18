@@ -16,11 +16,11 @@ public class STAGInv extends STAGProcessCommand {
         int i;
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Inventory: ");
+        sb.append("Your collection from your travels: ");
 
         for (i = 0; i < currPlayer.getPlayerInv(false).size(); i++) {
-            sb.append(currPlayer.getPlayerInv(false).get(i));
-            sb.append(" ");
+            sb.append(currPlayer.getPlayerInv(true).get(i));
+            sb.append("\n");
         }
         if(i == 0){
             sb.append("Empty");

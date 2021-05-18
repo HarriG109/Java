@@ -1,5 +1,4 @@
 package STAGCommand;
-
 import STAGData.LocationData;
 import STAGData.PlayerData;
 

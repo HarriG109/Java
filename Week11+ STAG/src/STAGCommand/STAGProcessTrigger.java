@@ -61,6 +61,9 @@ public class STAGProcessTrigger extends STAGProcessCommand {
             if (checkStringInList(s, currLoc.getCharList(false))) {
                 subjectCount++;
             }
+            if (checkStringInList(s, currLoc.getArtefactList(false))) {
+                subjectCount++;
+            }
             if (checkStringInList(s, currPlayer.getPlayerInv(false))) {
                 subjectCount++;
             }
@@ -163,7 +166,7 @@ public class STAGProcessTrigger extends STAGProcessCommand {
 
             //Use index to place furniture into current location;
             currLoc.addFurniture(getProducedLoc().getFurnitureList(false).get(i),
-                    getProducedLoc().getFurnitureList(false).get(i));
+                    getProducedLoc().getFurnitureList(true).get(i));
 
             //Remove furniture from unplaced
             getProducedLoc().removeFurniture(i);
@@ -175,7 +178,7 @@ public class STAGProcessTrigger extends STAGProcessCommand {
 
             //Use index to place character into current location;
             currLoc.addCharacter(getProducedLoc().getCharList(false).get(i),
-                    getProducedLoc().getCharList(false).get(i));
+                    getProducedLoc().getCharList(true).get(i));
 
             //Remove furniture from unplaced
             getProducedLoc().removeCharacter(i);

@@ -18,7 +18,7 @@ public class STAGGoTo extends STAGLook {
         if(!getPath.equals("NA")){
             //Update player location
             currPlayer.setPlayerLocIndex(getNewLocIndex(getPath, locations));
-            setReturnString(getLocInfo(locations.get(currPlayer.getPlayerLocIndex()), currPlayer, players, locations));
+            setReturnString(getLocInfo(currPlayer, players, locations));
         }
         else{
             setReturnString("Path doesn't exist");

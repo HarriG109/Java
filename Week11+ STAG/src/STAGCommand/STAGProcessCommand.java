@@ -56,7 +56,7 @@ public class STAGProcessCommand {
             //Create new instance of look
             STAGLook stgLk = new STAGLook();
             //Create look string and set as return string
-            setReturnString(stgLk.getLocInfo(currLoc, currPlayer, players, location));
+            setReturnString(stgLk.getLocInfo(currPlayer, players, location));
         }
         else if(checkExpectedCommand(commands, "health")) {
 
@@ -76,7 +76,7 @@ public class STAGProcessCommand {
             //Create new instance of look
             STAGLook stgLk = new STAGLook();
             //Create look string and set as return string
-            setReturnString(stgLk.getLocInfo(currLoc, currPlayer, players, location));
+            setReturnString(returnString() + stgLk.getLocInfo(currPlayer, players, location));
         }
     }
 
@@ -97,7 +97,7 @@ public class STAGProcessCommand {
         currPlayer.setHealth(3);
         currPlayer.setPlayerLocIndex(0);
         currPlayer.wipeInv();
-        setReturnString(returnString() + "\nYou ran out of health and have died!");
+        setReturnString(returnString() + "\nYou ran out of health and have died!\n");
 
     }
 

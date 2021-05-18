@@ -9,9 +9,11 @@ public class STAGLook extends STAGProcessCommand {
     }
 
     //Method to return string of location data
-    public String getLocInfo(LocationData locD, PlayerData currPlayer,
+    public String getLocInfo(PlayerData currPlayer,
                              ArrayList<PlayerData> players, ArrayList<LocationData> location){
 
+        //Re-create location in case location changes between actions
+        LocationData locD = location.get(currPlayer.getPlayerLocIndex());
         StringBuilder sb = new StringBuilder();
 
         sb.append("You are in " + locD.getLocDesc() + ". You can see: \n");

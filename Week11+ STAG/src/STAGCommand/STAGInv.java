@@ -23,7 +23,7 @@ public class STAGInv extends STAGProcessCommand {
             sb.append("\n");
         }
         if(i == 0){
-            sb.append("Empty");
+            sb.append("\nEmpty");
         }
 
         return sb.toString();

@@ -1,6 +1,7 @@
 package STAGCommand;
 import STAGData.PlayerData;
 
+//Class to handle showing current players inventory
 public class STAGInv extends STAGProcessCommand {
 
     public String invString;

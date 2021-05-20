@@ -4,12 +4,11 @@ import STAGData.LocationData;
 import STAGData.PlayerData;
 import java.util.ArrayList;
 
+//Class to handle the triggers
 public class STAGProcessTrigger extends STAGProcessCommand {
 
     public LocationData producedLoc;
     public String type;
-    public STAGProcessTrigger(){
-    }
 
     //Method to process a trigger
     public void processTrigger(String[] commands, LocationData currLoc,
@@ -48,8 +47,6 @@ public class STAGProcessTrigger extends STAGProcessCommand {
         }
     }
 
-    //TODO: Just had a thought what if there are multiple subjects i.e. two trees
-    //TODO: Just had a thought what if you pick up something that you already have?
     //Check all subjects are available in current location
     public boolean allSubjectsHere(ArrayList<String> subjects, LocationData currLoc, PlayerData currPlayer){
         int subjectCount = 0;

@@ -2,14 +2,10 @@ package STAGCommand;
 import STAGData.LocationData;
 import STAGData.PlayerData;
 
+//Class to allow current player to pick up item
 public class STAGGet extends STAGProcessCommand {
 
-    public STAGGet(){
-    }
-
     //Method to collectItemIfExists
-    //TODO: Need to evaluate if people anything mentioned is like the item i.e. wooden spoon etc.
-    //Handling two words could be problematic.
     public void collectItemIfExists(String[] commands, PlayerData currPlayer, LocationData currLoc){
 
         //Check command line for location artefact
@@ -17,10 +13,10 @@ public class STAGGet extends STAGProcessCommand {
 
         checkArtefactInLocation(getItem, currLoc, currPlayer);
         if(!getItem.equals("NA")){
-            setReturnString("You picked up" + getItem);
+            setReturnString("You picked up a " + getItem);
         }
         else{
-            setReturnString("Item doesn't exist in room");
+            setReturnString("Item doesn't exist in location");
         }
     }
 

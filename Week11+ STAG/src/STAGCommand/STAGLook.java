@@ -3,10 +3,8 @@ import STAGData.LocationData;
 import STAGData.PlayerData;
 import java.util.ArrayList;
 
+//Class allowing player to look in a location
 public class STAGLook extends STAGProcessCommand {
-
-    public STAGLook(){
-    }
 
     //Method to return string of location data
     public String getLocInfo(PlayerData currPlayer,
@@ -26,7 +24,7 @@ public class STAGLook extends STAGProcessCommand {
         return sb.toString();
     }
 
-    //TODO: These methods are too similar
+
     //Method to return string of characters in current location
     public String currLocCharsAsString(LocationData locD){
 

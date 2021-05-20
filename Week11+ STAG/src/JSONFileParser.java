@@ -14,6 +14,7 @@ public class JSONFileParser {
     public JSONFileParser(){
     }
 
+    //Method to import the actions from the .json file
     public void importActions(String actionFilename, ArrayList<ActionsTriggerData> triggers){
 
         int i;

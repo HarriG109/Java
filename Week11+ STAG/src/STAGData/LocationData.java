@@ -1,6 +1,7 @@
 package STAGData;
 import java.util.ArrayList;
 
+//Class which stores location data
 public class LocationData {
 
     public ArrayList<String> location = new ArrayList<String>();

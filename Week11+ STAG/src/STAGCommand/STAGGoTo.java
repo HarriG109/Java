@@ -3,10 +3,8 @@ import STAGData.LocationData;
 import STAGData.PlayerData;
 import java.util.ArrayList;
 
+//Class to allow players to goto a location
 public class STAGGoTo extends STAGLook {
-
-    public STAGGoTo(){
-    }
 
     //Method to alter location
     public void alterLoc(String[] commands, PlayerData currPlayer, LocationData currLoc,

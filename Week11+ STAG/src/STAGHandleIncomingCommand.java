@@ -1,6 +1,7 @@
 import STAGData.PlayerData;
 import java.util.ArrayList;
 
+//Class to handle the incoming command as tokens and add players if new
 public class STAGHandleIncomingCommand {
 
     int currentPlayerIndex;
@@ -8,6 +9,7 @@ public class STAGHandleIncomingCommand {
     String actualCommand;
     public String[] tokenArray;
 
+    //Constructor sets current player from
     public STAGHandleIncomingCommand(String command){
         //Get player name
         currentPlayerName = command.substring(0, command.indexOf(":"));

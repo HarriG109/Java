@@ -56,7 +56,7 @@ class StagServer
         //Create incoming commands as string
         String line = in.readLine();
 
-        //Instantiate object which breaks the incoming command into tokens and get current player
+        //Instantiate object which breaks the incoming command into tokens and sets the current player
         STAGHandleIncomingCommand newCommand = new STAGHandleIncomingCommand(line);
         //Add player if new
         newCommand.addPlayerIfNew(players);

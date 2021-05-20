@@ -2,13 +2,10 @@ package STAGCommand;
 import STAGData.LocationData;
 import STAGData.PlayerData;
 
+//Class to allow current player to drop items
 public class STAGDrop extends STAGProcessCommand {
 
-    public STAGDrop(){
-    }
-
     //Method to collectItemIfExists
-    //TODO: Need to evaluate if any object could be two words
     public void dropItemIfExists(String[] commands, PlayerData currPlayer, LocationData currLoc){
 
         //Get object name

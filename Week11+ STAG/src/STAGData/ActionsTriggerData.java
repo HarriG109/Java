@@ -2,6 +2,7 @@ package STAGData;
 import org.json.simple.JSONArray;
 import java.util.ArrayList;
 
+//Class which stores triggers
 public class ActionsTriggerData {
 
     String trigger;

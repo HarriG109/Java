@@ -1,6 +1,7 @@
 package STAGData;
 import java.util.ArrayList;
 
+//Class which stores player data
 public class PlayerData {
 
     public String player;

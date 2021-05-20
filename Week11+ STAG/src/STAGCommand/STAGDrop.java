@@ -21,7 +21,6 @@ public class STAGDrop extends STAGProcessCommand {
     }
 
     //Check artefact is in location and remove it if it is
-    //Note: Need to get descriptions and also the inventory should present descriptions maybe?
     public void checkArtefactInInv(String commandLoc, LocationData currLoc, PlayerData currPlayer){
         int i;
 

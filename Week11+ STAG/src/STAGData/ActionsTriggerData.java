@@ -20,17 +20,17 @@ public class ActionsTriggerData {
     //Method to add subject to arraylist
     public void addSubject(JSONArray subject){
         subjectsList.addAll(subject);
-    }
+    } //Not understanding this, Intellij says method is not used but it is within JSONFileParser
 
     //Method to add consumed info to arraylist
     public void addConsumed(JSONArray consume){
         consumedList.addAll(consume);
-    }
+    } //Not understanding this, Intellij says method is not used but it is within JSONFileParser
 
     //Method to add produced info to arraylist
     public void addProduced(JSONArray produce){
         producedList.addAll(produce);
-    }
+    } //Not understanding this, Intellij says method is not used but it is within JSONFileParser
 
     //Method to get trigger name
     public String getTrig(){
